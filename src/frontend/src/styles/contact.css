@@ -1,0 +1,16 @@
+.last-msg{
+    font-size: 12px;
+    text-align: left;
+    line-height: 1.5;
+}
+.contact-name{
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    line-height: 1.2;
+}
+.unread-badge{
+    vertical-align: middle;
+    font-size: 11px;
+    margin-top: 10px;
+}
