@@ -14,3 +14,15 @@
     font-size: 11px;
     margin-top: 10px;
 }
+.contact-search{
+    margin-block: 20px;
+    height: 30px;
+    font-size: 14px;
+}
+.contact-search:focus{
+    box-shadow: none;
+}
+.contact-menu{
+    border-radius: 40% !important;
+    cursor: pointer;
+}

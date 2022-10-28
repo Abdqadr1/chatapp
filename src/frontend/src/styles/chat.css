@@ -1,0 +1,9 @@
+.header-icons-div{
+    height: 28px;
+    width: 28px;
+    border-radius: 50%;
+    background-color: var(--light);
+}
+.header-icons{
+    font-size: 14px;
+}
