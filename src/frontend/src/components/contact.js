@@ -9,7 +9,7 @@ const Contact = ({name, time, unread, last_msg}) => {
               <img width="35" height="35" className="rounded-pill border" src={profileIMage} alt="contact" />
             </Col>
             <Col sm="7">
-                <div className="contact-name">{name}</div>
+                <div className="chat-name">{name}</div>
                 <div className="last-msg">{last_msg}</div>
             </Col>
             <Col sm="2">

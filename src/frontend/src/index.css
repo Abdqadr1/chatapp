@@ -17,3 +17,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* *{
+  border: 1px solid red;
+} */
+.chat-page-container{
+  height: calc(100vh - 20px);
+  padding: 10px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border: 1px solid #6c757d;
+  margin: 8px;
+}
+.chat-row, .chat-col, .msg-col{
+  height: 100%;
+}

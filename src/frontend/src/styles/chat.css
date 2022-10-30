@@ -7,3 +7,57 @@
 .header-icons{
     font-size: 14px;
 }
+.message-text{
+    font-size: 14px;
+}
+.message-time{
+    font-size: 11px;
+    margin-top: 0px;
+}
+.message-div{
+    min-width: 20%;
+    max-width: 100%;
+    margin-block: 5px;
+}
+.message-container{
+    padding: 10px;
+    word-wrap: break-word;
+    background-color: var(--light);
+    border-radius: 8px;
+}
+.inside::-webkit-scrollbar {
+    display: none;
+}
+.inside{
+    height: calc(100% - 120px);
+    overflow-y: auto;
+    max-height: 100%;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+}
+.write-div{
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px 10px;
+    z-index: 100;
+}
+.msg-input{
+    border: none;
+    outline: none;
+    padding: 3px;
+    background-color: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    width: calc(100% - 30px);
+}
+.right{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: calc(100% - 10px);
+}
+.write-icon{
+    font-size: 14px;
+}

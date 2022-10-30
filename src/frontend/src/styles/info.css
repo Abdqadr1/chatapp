@@ -1,0 +1,100 @@
+.info-image {
+    display: block;
+    width: 120px;
+    border-radius: 50%;
+    height: 120px;
+    margin: 10px auto;
+}
+
+.contact-name {
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    margin-block: 8px;
+}
+
+.contact-status {
+    font-size: 14px;
+    text-align: center;
+}
+
+.accordion-item {
+    border: none;
+}
+
+.ac-header,
+.ac-header button {
+    font-size: 15px;
+    font-weight: bold;
+    background-color: transparent !important;
+    color: rgba(19, 18, 18, 0.813) !important;
+    border: none !important;
+    outline: none !important;
+    padding: 6px 3px;
+}
+
+.ac-header button:focus,
+.ac-header button::-moz-focus-inner {
+    color: #000 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
+.accordion-button:not(.collapsed),
+.accordion-button.collapsed {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.ac-header button::after {
+    color: #000 !important;
+    background-color: transparent !important;
+    background-size: 16px;
+    border-color: #000 !important;
+}
+
+.ac-header button::after:focus,
+.ac-header button::after::-moz-focus-inner {
+    color: #000 !important;
+}
+
+.ac-body {
+    font-size: 14px;
+    padding: 5px;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.accordion-button:not(.collapsed)::after {
+    background-image: var(--bs-accordion-btn-icon) !important;
+}
+.download-div{
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--light);
+}
+.download-div svg {
+    font-size: 14px;
+    color: rgba(43, 43, 43, 0.896);
+}
+.image-el-col{
+    height: 100px;
+    padding: 0px 3px;
+    position: relative;
+}
+.image-el-col>img{
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+}
+.image-el-col > .download-div{
+    position: absolute;
+    z-index: 120;
+    top: calc(50% - 14px);
+    left: calc(50% - 14px);
+    background-color: rgba(163, 152, 152, 0.598);
+}

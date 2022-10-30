@@ -3,11 +3,18 @@ import "../styles/contact.css";
 import { Row, Col, Badge, Form } from "react-bootstrap";
 import { Icon } from '@iconify/react';
 import profileIMage from "../images/female-av.png";
+import { useState } from "react";
 
 const Contacts = () => {
+    const [contacts, setContacts] = useState([...contactArray]);
+    const handleSearch = e => {
+        const text = e.target.value;
+        const filtered = contactArray.filter(f => f.name.includes(text));
+        setContacts([...filtered]);
+    }
     return (
         <div className="p-3">
-            <Row className="justify-content-betweenpy-2">
+            <Row className="justify-content-between py-2">
                 <Col sm="3">
                     <img width="35" height="35" className="rounded-pill border" src={profileIMage} alt="contact" />
                 </Col>
@@ -20,10 +27,13 @@ const Contacts = () => {
                     </Badge>
                 </Col>
             </Row>
-            <Form.Control type="text" placeholder="Search" className="contact-search" />
+            <Form.Control type="text" placeholder="&#128269; Search" className="contact-search" onInput={handleSearch} />
             <div className="mt-3">
              {
-                contactArray.map((c, i) => <Contact key={i} {...c} />)
+                contacts.length > 0 ?
+                        contacts.map((c, i) => <Contact key={i} {...c} />)
+                        :
+                        <small>No contacts found.</small>
              }
             </div>
            
