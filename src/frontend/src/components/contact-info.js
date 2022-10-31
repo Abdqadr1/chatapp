@@ -11,7 +11,7 @@ const ContactInfo = () => {
                 <div className="contact-name">James Momoh</div>
                 <div className="contact-status">Active Now</div> 
             </div>
-            <div className="p-3">
+            <div className="p-3 media-div">
                 <Accordion defaultActiveKey="0">
                     <Accordion.Item eventKey="0">
                         <Accordion.Header className="ac-header">Shared Images</Accordion.Header>
@@ -34,24 +34,31 @@ const ContactInfo = () => {
                     </Accordion.Item>
                     </Accordion>
             </div>
+            <div className="block-div">
+                
+            </div>
         </div>
      );
 }
 
-
-const FileElement = ({ name, url }) => {
-    const obj = {
+const obj = {
+        txt: "bi:filetype-txt",
         pdf: "ant-design:file-pdf-filled",
         doc: "bxs:file-doc",
         docx: "bi:filetype-docx",
         csv: "bi:filetype-csv",
         audio: "dashicons:media-audio",
     }
-    const type = "";
+const FileElement = ({ name, url }) => {
+    
+    const ext = name.substring(name.lastIndexOf('.') + 1);
+    const path = obj?.[ext];
+    const colours = ['text-danger', 'text-warning', 'text-primary', 'text-secondary']
+    let col = colours[Math.floor(Math.random()*colours.length)];
     return (
         <div className="d-flex justify-content-between my-2">
-            <div>
-                <Icon icon={type} />
+            <div className="d-flex align-items-center">
+                <Icon icon={path} className={"me-2 " + col} />
                 <div>{name}</div>
             </div>
             <div className="p-1 bg-light rounded-pill download-div" title="download">
@@ -73,7 +80,7 @@ const ImageElement = ({ url }) => {
 }
 
 const fileArray = [
-    "resume.pdf", "design.docs", "project a.txt"
+    "resume.pdf", "design.doc", "project a.txt"
 ]
  
 export default ContactInfo;

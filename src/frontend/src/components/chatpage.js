@@ -6,7 +6,7 @@ const ChatPage = () => {
     return ( 
         <div className="chat-page-container">
             <Row className="justify-content-center chat-row">
-                <Col sm="3" className="border chat-col">
+                <Col sm="3" className="border chat-col px-0">
                     <Contacts />
                 </Col>
                 <Col sm="6" className="border chat-col">

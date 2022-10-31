@@ -10,9 +10,7 @@
     line-height: 1.2;
 }
 .unread-badge{
-    vertical-align: middle;
     font-size: 11px;
-    margin-top: 10px;
 }
 .contact-search{
     margin-block: 20px;
@@ -23,6 +21,22 @@
     box-shadow: none;
 }
 .contact-menu{
-    border-radius: 40% !important;
+    border-radius: 50% !important;
     cursor: pointer;
+    height: 28px;
+    width: 28px;
+}
+.contact-col{
+    height: 100%;
+}
+.con-div{
+    height: calc(100% - 110px);
+    overflow-y: scroll;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+}
+.con-div::-webkit-scrollbar {
+    display: none;
 }

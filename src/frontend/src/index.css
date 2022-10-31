@@ -11,6 +11,10 @@ body {
     sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
 }
 
 code {
@@ -30,4 +34,5 @@ code {
 }
 .chat-row, .chat-col, .msg-col{
   height: 100%;
+  max-height: calc(100% - 0px);
 }

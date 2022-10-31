@@ -98,3 +98,9 @@
     left: calc(50% - 14px);
     background-color: rgba(163, 152, 152, 0.598);
 }
+.media-div{
+    max-height: calc(100% - 280px);
+}
+.block-div{
+    height: 30px;
+}
