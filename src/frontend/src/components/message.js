@@ -17,7 +17,7 @@ const Message = ({ text, image, file, time, sender, setViewImage }) => {
                             { image ? <img onClick={viewImage} src={image} alt='message' className="msg-image" /> : '' }
                             { text ? <div className={"text-start message-text"}>{text}</div> : '' }
                         </div>
-                        <div className={timeDir +  " message-time"}>{time.getTime()}</div>
+                        <div className={timeDir +  " message-time"}>{time.toLocaleTimeString()}</div>
                     </div>
                 </div>
                

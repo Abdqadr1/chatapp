@@ -2,12 +2,27 @@
 import { Icon } from "@iconify/react";
 import { Accordion, Col, Row } from "react-bootstrap";
 import headerImage from "../images/male-av.png";
-import "../styles/info.css"
+import "../styles/info.css";
+import { downloadFile } from "./utilities";
+import { useState } from "react";
+import ImageModal from "./image-modal";
 const ContactInfo = () => {
+    const [images, setImages] = useState([...imageArray])
+    const [files, setFiles] = useState([...fileArray]);
+    const [viewImage, setViewImage] = useState({ show: false, image: '' });
+
+    const handleClick = e => {
+        setViewImage(s => ({
+            ...s,
+            show: true,
+            image: headerImage
+        }))
+    }
+
     return ( 
         <div className="">
             <div className="p-3 border-bottom">
-                <img src={headerImage} alt="contact" className="info-image" />
+                <img src={headerImage} alt="contact" className="info-image" onClick={handleClick} />
                 <div className="contact-name">James Momoh</div>
                 <div className="contact-status">Active Now</div> 
             </div>
@@ -17,10 +32,9 @@ const ContactInfo = () => {
                         <Accordion.Header className="ac-header">Shared Images</Accordion.Header>
                         <Accordion.Body className="ac-body">
                             <Row>
-                                <ImageElement url={headerImage} />
-                                <ImageElement url={headerImage} />
-                                <ImageElement url={headerImage} />
-                                <ImageElement url={headerImage} />
+                                {
+                                    images.map((img, i) => <ImageElement key={i} image={img} setImages={setImages} />)
+                                }
                             </Row>
                         </Accordion.Body>
                     </Accordion.Item>
@@ -28,7 +42,7 @@ const ContactInfo = () => {
                         <Accordion.Header className="ac-header">Shared Files</Accordion.Header>
                         <Accordion.Body className="ac-body">
                             {
-                                fileArray.map((f, i) => <FileElement key={i} name={f} />)
+                                files.map((f, i) => <FileElement key={i} file={f} setFiles={setFiles} />)
                             }
                         </Accordion.Body>
                     </Accordion.Item>
@@ -37,6 +51,7 @@ const ContactInfo = () => {
             <div className="block-div">
                 
             </div>
+            <ImageModal obj={viewImage} setShow={setViewImage} />
         </div>
      );
 }
@@ -49,7 +64,15 @@ const obj = {
         csv: "bi:filetype-csv",
         audio: "dashicons:media-audio",
     }
-const FileElement = ({ name, url }) => {
+const FileElement = ({ file, setFiles }) => {
+    const { name, source, isDownloaded } = file;
+    const download = e => {
+        console.log("downloading file ...");
+        downloadFile(source, 'png', (data) => {
+            file.isDownloaded = true;
+            setFiles(s => [...s]);
+        });
+    }
     
     const ext = name.substring(name.lastIndexOf('.') + 1);
     const path = obj?.[ext];
@@ -61,26 +84,68 @@ const FileElement = ({ name, url }) => {
                 <Icon icon={path} className={"me-2 " + col} />
                 <div>{name}</div>
             </div>
-            <div className="p-1 bg-light rounded-pill download-div" title="download">
-                <Icon icon="ci:download" />
-            </div>
+            {
+                isDownloaded ? '' :
+                <div className="p-1 bg-light rounded-pill download-div" title="download" onClick={download} >
+                    <Icon icon="ci:download" />
+                </div>
+            }
         </div>
     );
 };
 
-const ImageElement = ({ url }) => {
+const ImageElement = ({ image, setImages }) => {
+    const { source, isDownloaded } = image;
+    const downloadImage = e => {
+        console.log("downloading image ...")
+        downloadFile(source, 'png', (data) => {
+            image.isDownloaded = true;
+            setImages(s => [...s]);
+        });
+    }
     return (
         <Col sm={4} className="image-el-col">
-            <img src={url} alt={url} />
-            <div className="download-div" title="download">
-                <Icon icon="ci:download" />
-            </div>
+            <img src={source} alt={source} />
+            {
+                isDownloaded ? "" : 
+                <div className="download-div" title="download" onClick={downloadImage} >
+                    <Icon icon="ci:download" />
+                </div>
+            }
         </Col>
     )
 }
 
 const fileArray = [
-    "resume.pdf", "design.doc", "project a.txt"
+    {
+        name: "resume.pdf",
+        source: headerImage,
+        isDownloaded: false
+    },
+    {
+        name: 'design.doc',
+        source: headerImage,
+        isDownloaded: false
+    }
+    , {
+        name: 'project.txt',
+        source: headerImage,
+        isDownloaded: false
+    }
+]
+const imageArray = [
+    {
+        source: headerImage,
+        isDownloaded: false
+    },
+    {
+        source: headerImage,
+        isDownloaded: false
+    },
+    {
+        source: headerImage,
+        isDownloaded: false
+    }
 ]
  
 export default ContactInfo;

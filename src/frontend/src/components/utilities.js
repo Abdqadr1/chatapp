@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Col, Row, Spinner } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 
 export  function alterArrayEnable(allUser, id, status, callback){
     const user = allUser.find((u) => id === u.id);
@@ -102,48 +102,11 @@ export const isTokenExpired = (response) => {
     return false
 }
 
-export const hasAnyAuthority = (auth, roles) => {
-    return auth.roles.some(role => {
-        return isInArray(role.name, roles)
-    })
-}
-export const hasOnlyAuthority =(auth, role) => {
-    if (auth.roles.length > 1) return false;
-    return auth.roles[0].name === role;
-}
-export const hasThisNotThese = (auth, role, not) => {
-    if (auth.roles.some(r => r.name === role)) {
-        if (hasAnyAuthority(auth, not)) return false;
-        return true;
-    }
-    return false;
-}
-
 export const isInArray = (needle, haystack) => {
     for (let i = 0; i < haystack.length; i++){
         if(needle === haystack[i]) return true
     }
     return false
-}
-
-export const getCategoriesWithHierarchy = async (token) => {
-    let hierarchies;
-    const url = process.env.REACT_APP_SERVER_URL + "category/get-hierarchy";
-    await axios.get(url, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    })
-    .then(response => {
-        const data = response.data;
-        localStorage.setItem("hierarchies", JSON.stringify(data))
-        hierarchies = data
-    })
-    .catch(error => {
-        console.error("Could not get categories hierarchy")
-        console.error(error.response)
-    })
-    return hierarchies
 }
 
 export function formatDate(date, dateStyle="short", timeStyle="short") {
@@ -164,62 +127,43 @@ export function formatDate(date, dateStyle="short", timeStyle="short") {
         return str;
 }
 
-export const formatPrice = (price, s, m, t, pos) => {
-    if (!s) return 0;
-    t = t === "COMMA" ? "," : ".";
-    if (price || price === 0) {
-        const re = '\\d(?=(\\d{3})' + (m > 0 ? '\\.' : '$') + ')';
-        let f = price.toFixed(Math.max(0, ~~m)).replace(new RegExp(re, 'g'), '$&' + t);
-        if (pos.toLowerCase().startsWith("before")) {
-            return `${s}${f}`;
-        } else {
-            return `${f}${s}`;
-        }
-    }
-    
-}
 export const getShortName = (name, len=60) => {
     if(name.length > len){
         return name.substring(0,len) + "...";
     }
     return name;
 }
-export const getPrices = (discount, price, realPrice, formatPrice) => {
-    if(discount > 0){
-        return (
-          <h5 className="text-dark text-start fw-bold fs-6">
-            <span>{formatPrice(realPrice)}</span>
-            <del className="text-danger mx-2">{formatPrice(price)}</del>
-          </h5>
-        );
-    }
-    return (
-      <h5 className="text-dark text-start fw-bold">
-        <span>{formatPrice(price)}</span>
-      </h5>
-    );
-}
 
-export function listProducts(results, keyword, formatPrice, handler){
-    if(results.length > 0){
-        return (
-            <>
-                <h3 className="mt-4 mb-2"> Search Results for "{keyword}"</h3>
-                <Row className="justify-content-around p-4 mx-0">
-                    {
-                        results.map((p) => (
-                            <Col onClick={e=>handler(p)} key={p.name} xs={5} sm={4} md={3} lg={2} xlg={2} className="cs mx-1 border rounded mt-2">
-                                <img loading="lazy" src={p.mainImagePath} alt={getShortName(p.name, 10)} className="product-image" />
-                                <h6 className="my-2 text-primary text-start">{getShortName(p.name)}</h6>
-                                {getPrices(p.discountPrice, p.price, p.realPrice, formatPrice)}
-                            </Col>
-                        ))
-                    }
-                </Row>
-            </>
-        );
-    } else {
-        if (keyword && keyword.length > 1) return <h4 className="text-center mt-3"> No products found "{keyword}"</h4>
-        return <h4 className="text-center mt-3"> No products </h4>
-    }
+export const downloadFile = (url, ext, cb) => {
+     axios.get(url, {responseType: 'blob'}).then((res) => {
+
+        // Log somewhat to show that the browser actually exposes the custom HTTP header
+        const fileNameHeader = "x-suggested-filename";
+        const suggestedFileName = res.headers[fileNameHeader];
+        const effectiveFileName = (suggestedFileName === undefined
+                    ? url.substring(5)
+                    : suggestedFileName);
+        console.log(`Received header [${fileNameHeader}]: ${suggestedFileName}, effective fileName: ${effectiveFileName}`);
+
+        // Let the user save the file.
+         console.log(res.data);
+         // create file link in browser's memory
+        const href = URL.createObjectURL(res.data);
+
+        // create "a" HTML element with href to file & click
+        const link = document.createElement('a');
+        link.href = href;
+        link.setAttribute('download', effectiveFileName); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+
+        // clean up "a" element & remove ObjectURL
+        document.body.removeChild(link);
+         URL.revokeObjectURL(href);
+         cb(res.data);
+
+     })
+         .catch((response) => {
+            console.error("Could not Download the Excel report from the backend.", response);
+        });
 }

@@ -4,7 +4,7 @@ import { Row, Col, Form } from "react-bootstrap";
 import { Icon } from '@iconify/react';
 import profileIMage from "../images/female-av.png";
 import { useState } from "react";
-import AddContactModal from "./add-contact";
+import AddContactModal from "./add-contact-modal";
 
 const Contacts = () => {
     const [newContact, setNewContact] = useState({ show:false })
@@ -43,7 +43,7 @@ const Contacts = () => {
                         <small>No contacts found.</small>
              }
             </div>
-           <AddContactModal obj={newContact} setShow={setNewContact} />
+           <AddContactModal obj={newContact} setShow={setNewContact} callback={setContacts} />
         </div>
     );
 }

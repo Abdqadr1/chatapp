@@ -91,7 +91,7 @@ const messages = [
         image: headerImage,
         time: new Date()
     },{
-        text: "okay i heard your",
+        text: ".",
         sender: "1",
         receiver: '535',
         image: "",

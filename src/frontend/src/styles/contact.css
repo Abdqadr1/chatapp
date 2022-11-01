@@ -40,3 +40,18 @@
 .con-div::-webkit-scrollbar {
     display: none;
 }
+.add-select{
+    width: 28%;
+}
+.add-input{
+    width: 70%;
+}
+.add-btn{
+    min-width: 100px;
+    margin-block: 10px;
+    float: right;
+    clear: left;
+}
+.contact:hover{
+    background-color: var(--secondary-hover);
+}

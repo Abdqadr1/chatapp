@@ -1,5 +1,6 @@
 :root{
   --secondary : #6c757d;
+  --secondary-hover: #84888b;
   --light: #dde1e4;
   --warning: #ffc107;
 }
@@ -21,9 +22,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-/* *{
-  border: 1px solid red;
-} */
+*{
+  /* border: 1px solid red; */
+  transition: all 0.2s;
+}
 .chat-page-container{
   height: calc(100vh - 20px);
   padding: 10px;
