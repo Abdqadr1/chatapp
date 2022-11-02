@@ -28,9 +28,9 @@ const AddContactModal = ({ obj, setShow, callback }) => {
         console.log("looking for " + code + number);
         const txt = btnRef.current.textContent;
         btnRef.current.innerHTML = SPINNERS_BORDER_HTML;
-        axios.get("http://api-env.eba-irpspqyp.us-east-1.elasticbeanstalk.com/country/all")
+        axios.get("http://localhost:8080/api/search-number/"+ number)
             .then(res => {
-                // console.log(res.data)
+                console.log(res.data)
                 callback(s => ([{
                     name: "Ajadi Ajasa",
                     last_msg: "",

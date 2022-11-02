@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface UserRepository extends MongoRepository<User, String> {
 
-    Optional<User> findByPhone(String number);
+    Optional<User> findByPhoneNumber(String number);
 
 }
