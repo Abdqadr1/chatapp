@@ -30,14 +30,16 @@ const AddContactModal = ({ obj, setShow, callback }) => {
         btnRef.current.innerHTML = SPINNERS_BORDER_HTML;
         axios.get("http://localhost:8080/api/search-number/"+ number)
             .then(res => {
-                console.log(res.data)
-                callback(s => ([{
-                    name: "Ajadi Ajasa",
+                console.log(res.data);
+                const { phoneNumber, firstName, lastName, photo } = res.data;
+                callback({
+                    name: `${firstName} ${lastName}`,
+                    phoneNumber: phoneNumber,
                     last_msg: "",
                     time: new Date(),
                     unread: 0,
-                    image: "image"
-                }, ...s]));
+                    image: photo
+                });
                 hideModal();
             })
             .catch(err => {

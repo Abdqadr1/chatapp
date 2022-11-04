@@ -10,6 +10,7 @@ const Register = () => {
     const [abortRef, alertRef] = [useRef(), useRef()];
     const [alert, setAlert] = useState({ show: false, message: "", variant: "danger" });
     const navigate = useNavigate();
+    const serverUrl = process.env.REACT_APP_SERVER_URL;
 
     useEffect(() => {
         abortRef.current = new AbortController();
@@ -45,7 +46,7 @@ const Register = () => {
         const data = new FormData(target);
         btn.innerHTML = SPINNERS_BORDER_HTML;
         listFormData(data);
-        axios.post("http://localhost:8080/api/register", data, { signal: abortRef?.current.signal })
+        axios.post(`${serverUrl}/register`, data, { signal: abortRef?.current.signal })
             .then(res => {
                 console.log(res.data);
                 navigate("/login");

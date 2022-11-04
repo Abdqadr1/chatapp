@@ -16,8 +16,8 @@ public class UserController {
     @Autowired private AuthenticationManager authenticationManager;
 
     @PostMapping("/api/register")
-    public UserDTO signUp(User user){
-        return new UserDTO(userService.registerUser(user));
+    public void signUp(User user){
+        userService.registerUser(user);
     }
 
     @GetMapping("/api/search-number/{number}")

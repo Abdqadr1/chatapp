@@ -1,26 +1,6 @@
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
 
-export  function alterArrayEnable(allUser, id, status, callback){
-    const user = allUser.find((u) => id === u.id);
-    user.enabled = status;
-    callback([...allUser])
-}
-
-export function alterArrayDelete(allUser, id, callback) {
-    const newUsers = allUser.filter(user => user.id !== id)
-    callback(newUsers)
-}
-
-export function alterArrayUpdate(user, callback) {
-    callback([user])
-}
-
-export function alterArrayAdd(allUser, user, callback) {
-    allUser.push(user)
-    callback([...allUser])
-}
-
 export function showThumbnail(file, cb) {
     const fileReader = new FileReader();
     fileReader.onload = (event) => {
@@ -37,7 +17,6 @@ export function listFormData(data){
     }
       
 }
-
 
 export function isFileValid(file) {
     if (file.size > 1048576) {
@@ -59,38 +38,12 @@ export const SPINNERS_GROW_HTML = `<div class="spinner-grow spinner-grow-sm text
                                     </div>`
 export const SEARCH_ICON = `<i class="bi bi-search"></i>`;
 
-export const getFormData = (form) => {
-    return Object.keys(form).reduce((formData, key) => {
-        if (key === 'roles') {
-                formData.append(key, form[key].map(role => role.id ?? role))
-        } else if(key === "product_images"){
-            const productImages =  form[key];
-            if(productImages.length > 0){
-                form[key].forEach((f, i) => {
-                    if(i === 0){
-                        formData.append("image", f);
-                    } else {
-                        formData.append("extra_image", f);
-                    }
-                })
-            }
-            
-        }else{ 
-            formData.append(key, form[key]);
-        }
-        return formData
-    }, new FormData());
-}
-
 export const isAuthValid = (auth) => {
     if (auth?.accessToken && auth?.id) return true
     
     return false
 }
 
-export const getAccessToken = () => {
-    return JSON.parse(localStorage.getItem("user")).accessToken
-}
 
 export const isTokenExpired = (response) => {
     if(response === null || response === undefined) return false;
@@ -100,31 +53,6 @@ export const isTokenExpired = (response) => {
         && message.indexOf("expired") > -1) return true
     
     return false
-}
-
-export const isInArray = (needle, haystack) => {
-    for (let i = 0; i < haystack.length; i++){
-        if(needle === haystack[i]) return true
-    }
-    return false
-}
-
-export function formatDate(date, dateStyle="short", timeStyle="short") {
-    if (date) {
-        const formatter = new Intl.DateTimeFormat("en-US", {dateStyle, timeStyle});
-         return formatter.format(new Date(date))
-    }
-    return "";
-}
- // eslint-disable-next-line no-unused-vars
- const formatDateForInput = (val, separator = "-") => {
-        if (!val) return "";
-        const parts = Intl.DateTimeFormat("en", { month: "2-digit", day: "2-digit", year: "numeric" }).formatToParts(new Date(val))
-        const year = parts[4].value;
-        const month = parts[0].value;
-        const day = parts[2].value;
-        const str = `${year}${separator}${month}${separator}${day}`;
-        return str;
 }
 
 export const getShortName = (name, len=60) => {
@@ -166,4 +94,20 @@ export const downloadFile = (url, ext, cb) => {
          .catch((response) => {
             console.error("Could not Download the Excel report from the backend.", response);
         });
+}
+
+export const getConversation = (key) => {
+    const str = sessionStorage.getItem(key);
+    if (str) return JSON.parse(str);
+
+    return [];
+}
+
+export const setConversation = (key, arr = []) => {
+    sessionStorage.setItem(key, JSON.stringify(arr));
+}
+
+export const scrollToBottom = (id) => {
+    const el = document.querySelector("#" + id);
+    el.scrollIntoView({ behavior: "smooth", block: "end" });
 }

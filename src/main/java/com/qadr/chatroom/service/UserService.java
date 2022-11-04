@@ -29,6 +29,7 @@ public class UserService implements UserDetailsService {
         if(byPhoneNumber.isPresent())
             throw new CustomException(HttpStatus.BAD_REQUEST, "Phone number already exists");
         user.setCreated_at(LocalDateTime.now());
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 

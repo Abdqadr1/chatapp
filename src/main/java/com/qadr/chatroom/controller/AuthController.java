@@ -13,9 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,18 +26,20 @@ public class AuthController {
 
 
     @PostMapping("/api/auth")
-    public ResponseEntity<Map<String, String>> login (@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<Map<String, String>> login (LoginRequest loginRequest){
 
         try{
             var authenticationToken =
                     new UsernamePasswordAuthenticationToken(loginRequest.getPhoneNumber(), loginRequest.getPassword());
             Authentication auth = authManager.authenticate(authenticationToken);
-            User user = (User) auth.getPrincipal();
+            User user = new User((String) auth.getPrincipal(), "", Collections.emptyList());
             Map<String, String> tokens = new HashMap<>();
             tokens.put("access_token", JWTUtil.createAccessToken(user, "/api/auth"));
             tokens.put("refresh_token", JWTUtil.createRefreshToken(user));
+            tokens.put("phoneNumber", loginRequest.getPhoneNumber());
             return new ResponseEntity<>(tokens, HttpStatus.OK);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new CustomException(HttpStatus.BAD_REQUEST, "Incorrect phone number or password");
         }
     }
