@@ -6,12 +6,11 @@ import profileIMage from "../images/female-av.png";
 import { useEffect, useState } from "react";
 import AddContactModal from "./add-contact-modal";
 
-const Contacts = ({setCurrentChat}) => {
-    const [newContactModal, setNewContactModal] = useState({ show:false })
-    const [contacts, setContacts] = useState([...contactArray]);
+const Contacts = ({setCurrentChat, contacts, setContacts}) => {
+    const [newContactModal, setNewContactModal] = useState({ show: false });
     const handleSearch = e => {
         const text = e.target.value;
-        const filtered = contactArray.filter(f => f.name.includes(text));
+        const filtered = contacts.filter(f => f.name.includes(text));
         setContacts([...filtered]);
     }
     const addContact = e => {
@@ -61,151 +60,4 @@ const Contacts = ({setCurrentChat}) => {
     );
 }
 
-const contactArray = [
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 4,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 2,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 2,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    }
-]
- 
 export default Contacts;

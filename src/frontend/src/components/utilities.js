@@ -56,7 +56,7 @@ export const isTokenExpired = (response) => {
 }
 
 export const getShortName = (name, len=60) => {
-    if(name.length > len){
+    if(name && name.length > len){
         return name.substring(0,len) + "...";
     }
     return name;
@@ -96,16 +96,26 @@ export const downloadFile = (url, ext, cb) => {
         });
 }
 
-export const getConversation = (key) => {
-    const str = sessionStorage.getItem(key);
-    if (str) return JSON.parse(str);
+export const getConversationFromStorage = (myPhoneNumber, toPhone, name) => {
+        const messageKey = myPhoneNumber + "_messages";
+        if (sessionStorage.getItem(messageKey)) {
+            const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
+            const fn = allMsgs.find(c => c.key === toPhone);
+            if (fn) {
+                return fn.messages;
+            } 
+        } 
+        const arr = [{ key: toPhone, name, messages: [] }];
+        sessionStorage.setItem(messageKey, JSON.stringify(arr));
+        return [];
+    }
 
-    return [];
-}
-
-export const setConversation = (key, arr = []) => {
-    sessionStorage.setItem(key, JSON.stringify(arr));
-}
+export const setConversationToStorage = (myPhoneNumber, toPhone, messages) => {
+        const messageKey = myPhoneNumber + "_messages";
+        const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
+        allMsgs.messages = messages;
+        sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
+    }
 
 export const scrollToBottom = (id) => {
     const el = document.querySelector("#" + id);

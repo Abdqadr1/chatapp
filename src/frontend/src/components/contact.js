@@ -2,9 +2,9 @@ import { Badge, Col, Row } from "react-bootstrap";
 import profileIMage from "../images/female-av.png";
 
 const Contact = ({ obj, setCurrentChat }) => {
-  const { name, phoneNumber, last_msg, unread } = obj;
+  const { name, last_msg, unread } = obj;
   const handleClick = e => {
-    setCurrentChat({name, phoneNumber})
+    setCurrentChat({...obj})
   }
     return (
           <Row className="justify-content-between py-2 border-bottom mx-0 contact" onClick={handleClick}>

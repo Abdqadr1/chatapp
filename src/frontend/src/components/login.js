@@ -44,7 +44,7 @@ const Login = () => {
             <Form onSubmit={handleSubmit} className="border rounded px-3 py-4" style={{width: "40vw"}} >
                 <p className="text-center fw-bold">Log In</p>
                 <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show} dismissible onClose={toggleAlert}>
-                    {alert.message}
+                    <small>{alert.message}</small>
                 </Alert>
                 <Form.Control placeholder="phonenumber" name="phoneNumber" required minLength={10} maxLength={15} />
 

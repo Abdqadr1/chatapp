@@ -3,19 +3,16 @@ import { Icon } from "@iconify/react";
 import "../styles/chat.css";
 import headerImage from "../images/male-av.png";
 import Message from "./message";
-import { getConversation, isFileValid, scrollToBottom, setConversation, showThumbnail } from "./utilities";
+import { getShortName, isFileValid, scrollToBottom, showThumbnail } from "./utilities";
 import { useEffect, useRef, useState } from "react";
 import MessageModal from "./message_modal";
 import ImageModal from "./image-modal";
-import { useNavigate } from "react-router";
-const Chat = ({ auth, contact }) => {
-    const navigate = useNavigate();
+const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connectionStatus }) => {
     const { name, image, status, phoneNumber } = contact;
     const { access_token, phoneNumber: myPhoneNumber } = auth;
     const [photos, setPhotos] = useState('');
     const [viewImage, setViewImage] = useState({ show: false, image: '' });
-    const [msgModal, setMsgModal] = useState({ show: false, title: "File error", message: "File type not supported." })
-    const [messages, setMessages] = useState([...msgs]);
+    const [msgModal, setMsgModal] = useState({ show: false, title: "File error", message: "File type not supported." });
     const [isMessage, setIsMessage] = useState(false);
     const [inputRef] = [useRef()]
     const elId = "chatDiv";
@@ -34,14 +31,9 @@ const Chat = ({ auth, contact }) => {
         }
     }
 
-    const key = `${myPhoneNumber},${phoneNumber}`;
 
     useEffect(() => {
         //TODO: get message from server
-        setMessages(getConversation(key));
-        return () => {
-            setConversation(key, messages);
-        }
     }, []);
 
     useEffect(() => {
@@ -56,10 +48,14 @@ const Chat = ({ auth, contact }) => {
             image: "",
             time: new Date()
         }
+        send(msg);
         setMessages(s => ([...s, msg]));
         inputRef.current.value = "";
         setIsMessage(false);
-        //TODO: send to server
+    }
+
+    const doMicrophone = e => {
+        console.log("microphone....")
     }
 
     const changeIcon = e => {
@@ -69,11 +65,11 @@ const Chat = ({ auth, contact }) => {
     return ( 
         <div className="msg-col">
             <Row className="chat-header justify-content-between border-bottom py-3">
-                <Col md={4}>
+                <Col md={8}>
                     <div className="d-flex justify-content-start">
                         <img width="35" height="35" className="rounded-pill border" src={headerImage} alt="contact" />
                         <div className="ms-2">
-                            <div className="chat-name">{name}</div>
+                            <div className="chat-name">{getShortName(name, 40)}</div>
                             <div className="last-msg">{ status ? "Active Now" : "Offline"}</div>
                         </div>
                     </div>
@@ -91,6 +87,7 @@ const Chat = ({ auth, contact }) => {
                         </div>
                     </div>
                 </Col>
+                {/* <Col md={12}> <small>{ connectionStatus }</small></Col> */}
             </Row>
             <div className="inside">
                  <div className="chat-div py-3" id={elId}>
@@ -113,7 +110,7 @@ const Chat = ({ auth, contact }) => {
                 {
                     isMessage ? <Icon icon="akar-icons:send" title="send" className="write-icon" onClick={sendMessage} /> :
 
-                    <Icon icon="bxs:microphone" title="record" className="write-icon" />
+                    <Icon icon="bxs:microphone" title="record" className="write-icon" onClick={doMicrophone} />
                 }
             </div>
             <MessageModal obj={msgModal} setShow={setMsgModal} />
@@ -121,87 +118,5 @@ const Chat = ({ auth, contact }) => {
         </div>
      );
 }
-
-const msgs = [
-    {
-        text: "okay i heard your",
-        sender: "1",
-        receiver: '535',
-        image: "",
-        time: new Date()
-    },
-    {
-        text: "okay i heard your",
-        sender: "3535",
-        receiver: '1',
-        image: headerImage,
-        time: new Date()
-    },{
-        text: ".",
-        sender: "1",
-        receiver: '535',
-        image: "",
-        time: new Date()
-    },
-    {
-        text: "okay i heard your",
-        sender: "3535",
-        receiver: '1',
-        image: "",
-        time: new Date()
-    },{
-        text: "okay i heard your",
-        sender: "1",
-        receiver: '535',
-        image: headerImage,
-        time: new Date()
-    },
-    {
-        text: "okay i heard your",
-        sender: "3535",
-        receiver: '1',
-        image: "",
-        time: new Date()
-    },{
-        text: "okay i heard your",
-        sender: "1",
-        receiver: '535',
-        image: "",
-        time: new Date()
-    },
-    {
-        text: "okay i heard your",
-        sender: "3535",
-        receiver: '1',
-        image: "",
-        time: new Date()
-    },{
-        text: "okay i heard your",
-        sender: "1",
-        receiver: '535',
-        image: "",
-        time: new Date()
-    },
-    {
-        text: "okay i heard your",
-        sender: "3535",
-        receiver: '1',
-        image: "",
-        time: new Date()
-    },{
-        text: "okay i heard your",
-        sender: "1",
-        receiver: '535',
-        image: "",
-        time: new Date()
-    },
-    {
-        text: "okay i heard your",
-        sender: "3535",
-        receiver: '1',
-        image: "",
-        time: new Date()
-    },
-];
  
 export default Chat;

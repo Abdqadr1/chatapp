@@ -30,6 +30,7 @@ public class UserService implements UserDetailsService {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Phone number already exists");
         user.setCreated_at(LocalDateTime.now());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setLastSeen(LocalDateTime.now());
         return userRepository.save(user);
     }
 
@@ -39,7 +40,7 @@ public class UserService implements UserDetailsService {
 
     public UserDTO search(String number) {
         User byPhoneNumber = getByPhoneNumber(number)
-                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Couldn't be found!"));
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user"));
 
         return new UserDTO(byPhoneNumber);
     }
@@ -47,7 +48,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User byPhoneNumber = getByPhoneNumber(username)
-                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Couldn't be found!"));
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number"));
         return new MyUserDetails(byPhoneNumber);
     }
 }
