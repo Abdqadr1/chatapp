@@ -96,26 +96,81 @@ export const downloadFile = (url, ext, cb) => {
         });
 }
 
+export const addMessage = (myPhoneNumber, message, key) => {
+    const messageKey = myPhoneNumber + "_messages";
+    if (key) {
+        const sender = message.sender;
+        const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
+        const fn = allMsgs.find(c => c.key === key);
+        if (fn) {
+            fn.messages.push(message);
+            fn.last_msg = message?.text || 'image';
+            sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
+            return;
+        }
+        
+        const arr = { key: sender, last_msg:message?.text || 'image', messages: [{...message}], name: "", photo: "" };
+        allMsgs.push(arr);
+        sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
+    }
+    
+}
+
 export const getConversationFromStorage = (myPhoneNumber, toPhone, name) => {
         const messageKey = myPhoneNumber + "_messages";
         if (sessionStorage.getItem(messageKey)) {
             const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
             const fn = allMsgs.find(c => c.key === toPhone);
             if (fn) {
-                return fn.messages;
+                return [allMsgs, fn.messages];
             } 
+            return [allMsgs, []];
         } 
-        const arr = [{ key: toPhone, name, messages: [] }];
+        const arr = toPhone ? [{ key: toPhone, name, photo: '', messages: [], last_msg: ""}] : [];
         sessionStorage.setItem(messageKey, JSON.stringify(arr));
-        return [];
+        return [[], []];
     }
 
 export const setConversationToStorage = (myPhoneNumber, toPhone, messages) => {
         const messageKey = myPhoneNumber + "_messages";
         const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
-        allMsgs.messages = messages;
+        const fn = allMsgs.find(c => c.key === toPhone);
+        fn.messages = messages; 
+        fn.last_msg = messages[messages.length - 1]?.text || "image";
         sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
+}
+
+export const addContactToStorage = (myPhoneNumber, contact) => {
+    const messageKey = myPhoneNumber + "_messages";
+    const { phoneNumber, key, photo, name, last_msg } = contact;
+    const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
+    const fn = allMsgs.find(c => c.key === phoneNumber);
+    if(fn){
+        fn.name = name;
+        fn.photo = photo;
+        sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
+        return;
     }
+    allMsgs.push({ key, name, photo, messages: [], last_msg });
+    sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
+    
+}
+
+export const updateSentMessage = (myPhoneNumber, msg) => {
+    const messageKey = myPhoneNumber + "_messages";
+    const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
+    const fn = allMsgs.find(c => c.key === msg.receiver);
+    if (fn) {
+        const index = fn.messages.findIndex(c => c.id === msg.key);
+        if (index > -1) {
+            const old = fn.messages[index];
+            delete msg.key;
+            fn.messages[index] = { ...old, ...msg };
+        }
+        sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
+        return;
+    }
+}
 
 export const scrollToBottom = (id) => {
     const el = document.querySelector("#" + id);

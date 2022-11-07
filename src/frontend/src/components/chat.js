@@ -31,16 +31,11 @@ const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connect
         }
     }
 
-
-    useEffect(() => {
-        //TODO: get message from server
-    }, []);
-
     useEffect(() => {
         scrollToBottom(elId);
     }, [messages])
 
-    const sendMessage = e => {
+    const sendMessage = () => {
         const msg = {
             text: inputRef?.current?.value || "",
             sender: myPhoneNumber,
@@ -54,6 +49,10 @@ const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connect
         setIsMessage(false);
     }
 
+    const sendTheMessage = e => {
+        if (e.keyCode === 13 && e.target.value !== "") sendMessage();
+    }
+
     const doMicrophone = e => {
         console.log("microphone....")
     }
@@ -62,6 +61,8 @@ const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connect
         if (e.target.value !== "") setIsMessage(true);
         if (e.target.value === "") setIsMessage(false);
     }
+
+
     return ( 
         <div className="msg-col">
             <Row className="chat-header justify-content-between border-bottom py-3">
@@ -105,7 +106,8 @@ const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connect
                     <label htmlFor="at-files" className="me-2  d-flex align-items-center">
                         <Icon icon="ooui:attachment" className="write-icon" title="attach files" />
                     </label>
-                    <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..." onInput={changeIcon} />
+                    <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..."
+                        onInput={changeIcon} onKeyDown={sendTheMessage} />
                 </div>
                 {
                     isMessage ? <Icon icon="akar-icons:send" title="send" className="write-icon" onClick={sendMessage} /> :

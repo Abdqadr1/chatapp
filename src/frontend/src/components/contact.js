@@ -2,14 +2,15 @@ import { Badge, Col, Row } from "react-bootstrap";
 import profileIMage from "../images/female-av.png";
 
 const Contact = ({ obj, setCurrentChat }) => {
-  const { name, last_msg, unread } = obj;
+  const { name, last_msg, unread, photo } = obj;
+  const img = photo ? photo : profileIMage;
   const handleClick = e => {
     setCurrentChat({...obj})
   }
     return (
           <Row className="justify-content-between py-2 border-bottom mx-0 contact" onClick={handleClick}>
             <Col sm="2">
-              <img width="35" height="35" className="rounded-pill border" src={profileIMage} alt="contact" />
+              <img width="35" height="35" className="rounded-pill border" src={img} alt="contact" />
             </Col>
             <Col sm="8">
                 <div className="chat-name">{name}</div>

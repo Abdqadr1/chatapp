@@ -16,11 +16,11 @@ import org.springframework.stereotype.Controller;
 public class MessageController {
     @Autowired private MessageService messageService;
 
-    @MessageMapping("/chat/{to}")
-    public void sendMessage(@DestinationVariable String to,  @Payload SocketMessage message) {
+    @MessageMapping("/chat/{key}")
+    public void sendMessage(@DestinationVariable String key,  @Payload SocketMessage message) {
         System.out.println(message);
         message.setStatus(MessageStatus.SENT);
-        messageService.saveAndSend(message, to);
+        messageService.saveAndSend(message, key);
     }
 
 }

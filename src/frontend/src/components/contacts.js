@@ -6,11 +6,11 @@ import profileIMage from "../images/female-av.png";
 import { useEffect, useState } from "react";
 import AddContactModal from "./add-contact-modal";
 
-const Contacts = ({setCurrentChat, contacts, setContacts}) => {
+const Contacts = ({setCurrentChat, contacts, setContacts, auth}) => {
     const [newContactModal, setNewContactModal] = useState({ show: false });
     const handleSearch = e => {
         const text = e.target.value;
-        const filtered = contacts.filter(f => f.name.includes(text));
+        const filtered = contacts.filter(f => f.name.includes(text) || f.phoneNumber.includes(text));
         setContacts([...filtered]);
     }
     const addContact = e => {
@@ -18,15 +18,21 @@ const Contacts = ({setCurrentChat, contacts, setContacts}) => {
     }
 
     const addNewContact = (obj) => {
-        const find = contacts.find(c => c.phoneNumber === obj.phoneNumber);
-        if (!find) {
+        const index = contacts.findIndex(c => c.phoneNumber === obj.phoneNumber);
+        if (index > -1) {
+            const c = contacts[index];
+            c.name = obj.name;
+            c.photo = obj.photo;
+            setContacts(s => ([...s]));
+        } else {
             setContacts(s => ([obj, ...s]));
+
         }
     }
 
-    useEffect(() => {
-        setCurrentChat(contacts[0]);
-    }, [])
+    // useEffect(() => {
+    //     setCurrentChat(contacts[0]);
+    // }, [])
 
 
     return (
@@ -55,7 +61,7 @@ const Contacts = ({setCurrentChat, contacts, setContacts}) => {
                         <small>No contacts found.</small>
              }
             </div>
-           <AddContactModal obj={newContactModal} setShow={setNewContactModal} callback={addNewContact} />
+           <AddContactModal obj={newContactModal} setShow={setNewContactModal} callback={addNewContact} auth={auth} />
         </div>
     );
 }

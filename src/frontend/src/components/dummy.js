@@ -33,54 +33,6 @@ export const contactArray = [
         unread: 2,
         image: "image"
     },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+2473545355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 0,
-        image: "image"
-    },
-    {
-        name: "full name",
-        last_msg: "I'm coming home.",
-        time: new Date(),
-        phoneNumber: "+247354355353",
-        unread: 1,
-        image: "image"
-    },
-    {
-        name: "full name2",
-        last_msg: "I'm going home.",
-        time: new Date(),
-        phoneNumber: "+2473584355353",
-        unread: 0,
-        image: "image"
-    }
 ]
 
 export const msgs = [

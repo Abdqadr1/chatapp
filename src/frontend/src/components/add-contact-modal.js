@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { SPINNERS_BORDER_HTML } from "./utilities";
-const AddContactModal = ({ obj, setShow, callback }) => {
+import { addContactToStorage, SPINNERS_BORDER_HTML } from "./utilities";
+const AddContactModal = ({ obj, setShow, callback, auth }) => {
     const [inputRef, abortRef, selectRef, btnRef, alertRef] = [useRef(), useRef(), useRef(), useRef(), useRef()];
     const [countries, setCountries] = useState([]);
     const hideModal = () => setShow(s => ({ ...s, show: false }));
     const [alert, setAlert] = useState({ show: false, message: "", variant: "danger" });
+    const url = process.env.REACT_APP_SERVER_URL;
 
     const toggleAlert = () => {
         setAlert({...alert, show: !alert.show})
@@ -18,7 +19,8 @@ const AddContactModal = ({ obj, setShow, callback }) => {
             .then(res => setCountries(res.data))
             .catch(() => setAlert({ show: true, message: "Could not fetch countries" }))
         return () => abortRef?.current.abort();
-    }, [abortRef])
+    }, [abortRef]);
+
 
     const findContact = e => {
         e.preventDefault();
@@ -28,18 +30,21 @@ const AddContactModal = ({ obj, setShow, callback }) => {
         console.log("looking for " + code + number);
         const txt = btnRef.current.textContent;
         btnRef.current.innerHTML = SPINNERS_BORDER_HTML;
-        axios.get("http://localhost:8080/api/search-number/"+ number)
+        axios.get(`${url}/search-number/${number}`)
             .then(res => {
                 console.log(res.data);
                 const { phoneNumber, firstName, lastName, photo } = res.data;
-                callback({
+                const c = {
+                    key: phoneNumber,
                     name: `${firstName} ${lastName}`,
                     phoneNumber: phoneNumber,
                     last_msg: "",
                     time: new Date(),
                     unread: 0,
-                    image: photo
-                });
+                    photo
+                }
+                addContactToStorage(auth?.phoneNumber, c);
+                callback(c);
                 hideModal();
             })
             .catch(err => {
