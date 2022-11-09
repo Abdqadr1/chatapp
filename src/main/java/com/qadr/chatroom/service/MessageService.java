@@ -4,11 +4,13 @@ import com.qadr.chatroom.model.Message;
 import com.qadr.chatroom.model.MessageStatus;
 import com.qadr.chatroom.model.SocketMessage;
 import com.qadr.chatroom.repo.MessageRepo;
+import com.qadr.chatroom.repo.UserRepository;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,6 +25,7 @@ public class MessageService {
         Message message = new Message(msg);
         message.setDate(new Date());
         messageRepo.save(message);
+
         simpleMessagingTemplate.convertAndSend("/topic/messages/"+message.getReceiver(), message);
         simpleMessagingTemplate.convertAndSend(
                 "/topic/sent/"+message.getSender(),
@@ -34,6 +37,11 @@ public class MessageService {
         return messageRepo.getMessagesBetween(from, to);
     }
 
+    public String uploadPhoto(MultipartFile file) throws InterruptedException {
+        Thread.sleep(5000);
+        return "image-uploaded";
+    }
+
     @Data
     @NoArgsConstructor
     static class MessageReport{
@@ -41,7 +49,8 @@ public class MessageService {
         private Date date;
         private String id;
         private String time;
-        private String key, receiver;
+        private String key;
+        private String receiver;
 
         public MessageReport (Message message, String key){
             status = message.getStatus();

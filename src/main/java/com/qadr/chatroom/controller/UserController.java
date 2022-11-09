@@ -7,10 +7,7 @@ import com.qadr.chatroom.service.MessageService;
 import com.qadr.chatroom.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,8 +27,10 @@ public class UserController {
         return userService.search(number);
     }
 
-    @GetMapping("/api/get-contact-status/{number}")
-    public UserDTO getContactStatus(@PathVariable String number){
+    @GetMapping("/api/get-contact-status/{current}/{number}")
+    public UserDTO getContactStatus(@PathVariable("number") String number,
+                                    @PathVariable("current") String current){
+        userService.updateStatus(current);
         return userService.search(number);
     }
 
@@ -39,6 +38,11 @@ public class UserController {
     @GetMapping("/api/get-messages/{from}/{to}")
     public List<Message> getChat(@PathVariable("from") String from, @PathVariable("to") String to){
         return messageService.getChatBetween(from, to);
+    }
+
+    @PutMapping("/api/update-status/{number}")
+    public void updateStatus(@PathVariable String number){
+        userService.updateStatus(number);
     }
 
 

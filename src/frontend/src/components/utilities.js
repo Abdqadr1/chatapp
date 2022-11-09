@@ -164,7 +164,6 @@ export const updateSentMessage = (myPhoneNumber, msg) => {
         const index = fn.messages.findIndex(c => c.id === msg.key);
         if (index > -1) {
             const old = fn.messages[index];
-            delete msg.key;
             fn.messages[index] = { ...old, ...msg };
         }
         sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));

@@ -17,7 +17,7 @@ public class Message {
     @Id
     private String id;
     private String sender, receiver, text;
-    private String image;
+    private String photo;
     private Date date;
     private MessageStatus status;
 
@@ -30,7 +30,7 @@ public class Message {
         text = msg.getText();
         sender = msg.getSender();
         receiver = msg.getReceiver();
-        image = msg.getImage();
+        photo = msg.getPhoto();
         date = msg.getDate();
         status = msg.getStatus();
     }

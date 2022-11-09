@@ -3,15 +3,14 @@ import "../styles/contact.css";
 import { Row, Col, Form } from "react-bootstrap";
 import { Icon } from '@iconify/react';
 import profileIMage from "../images/female-av.png";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AddContactModal from "./add-contact-modal";
 
-const Contacts = ({setCurrentChat, contacts, setContacts, auth}) => {
+const Contacts = ({setCurrentChat, contacts, setContacts, auth, searchContact }) => {
     const [newContactModal, setNewContactModal] = useState({ show: false });
     const handleSearch = e => {
         const text = e.target.value;
-        const filtered = contacts.filter(f => f.name.includes(text) || f.phoneNumber.includes(text));
-        setContacts([...filtered]);
+        searchContact(text);
     }
     const addContact = e => {
         setNewContactModal(s => ({...s, show:true }))

@@ -6,6 +6,7 @@ import "../styles/info.css";
 import { downloadFile } from "./utilities";
 import { useState } from "react";
 import ImageModal from "./image-modal";
+import { Link } from "react-router-dom";
 const ContactInfo = () => {
     const [images, setImages] = useState([...imageArray])
     const [files, setFiles] = useState([...fileArray]);
@@ -21,6 +22,9 @@ const ContactInfo = () => {
 
     return ( 
         <div className="">
+            <div className="my-2 text-end pe-3">
+                <small><Link className="text-decoration-none text-danger " to={"/logout"}>Logout</Link></small>
+            </div>
             <div className="p-3 border-bottom">
                 <img src={headerImage} alt="contact" className="info-image" onClick={handleClick} />
                 <div className="contact-name">James Momoh</div>

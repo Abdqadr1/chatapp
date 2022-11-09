@@ -4,6 +4,7 @@ import Login from './components/login';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import StompWrapper from './components/chatpage';
 import Register from './components/register';
+import LogOut from './components/logout';
 
 function App() {
   
@@ -15,6 +16,7 @@ function App() {
             <Route path="/chat" element={<StompWrapper />} />
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
+            <Route path='/logout' element={<LogOut />} />
           </Routes>
         </BrowserRouter>
       </div>

@@ -7,21 +7,28 @@ import { getShortName, isFileValid, scrollToBottom, showThumbnail } from "./util
 import { useEffect, useRef, useState } from "react";
 import MessageModal from "./message_modal";
 import ImageModal from "./image-modal";
-const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connectionStatus }) => {
-    const { name, image, status, phoneNumber } = contact;
+import SendFileModal from "./sendfile";
+const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) => {
+    const { name, image, phoneNumber } = contact;
     const { access_token, phoneNumber: myPhoneNumber } = auth;
-    const [photos, setPhotos] = useState('');
     const [viewImage, setViewImage] = useState({ show: false, image: '' });
     const [msgModal, setMsgModal] = useState({ show: false, title: "File error", message: "File type not supported." });
+    const [photoModal, setPhotoModal] = useState({ show: false, image: '' });
     const [isMessage, setIsMessage] = useState(false);
     const [inputRef] = [useRef()]
     const elId = "chatDiv";
 
-    const handleSelectImage = (event, id) => {
+    const handleSelectImage = (event) => {
+        if (!phoneNumber) {
+            event.preventDefault();
+            return;
+        }
         const input = event.target;
         const file = input.files[0];
         if (isFileValid(file)) {
-            showThumbnail(file, setPhotos);
+            showThumbnail(file, (data) => {
+                setPhotoModal(s=> ({...s, show: true, image: data, file}))
+            });
         } else {
             setMsgModal(s => ({
                 ...s,
@@ -35,21 +42,26 @@ const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connect
         scrollToBottom(elId);
     }, [messages])
 
-    const sendMessage = () => {
+    const sendMessage = (messageFromModal, file) => {
         const msg = {
             text: inputRef?.current?.value || "",
             sender: myPhoneNumber,
             receiver: phoneNumber,
             image: "",
-            time: new Date()
+            time: new Date(),
+            status: "PENDING",
+            ...messageFromModal
         }
-        send(msg);
-        setMessages(s => ([...s, msg]));
+        send(msg, file);
         inputRef.current.value = "";
         setIsMessage(false);
     }
 
     const sendTheMessage = e => {
+        if (!phoneNumber) {
+            e.preventDefault();
+            return;
+        }
         if (e.keyCode === 13 && e.target.value !== "") sendMessage();
     }
 
@@ -68,10 +80,10 @@ const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connect
             <Row className="chat-header justify-content-between border-bottom py-3">
                 <Col md={8}>
                     <div className="d-flex justify-content-start">
-                        <img width="35" height="35" className="rounded-pill border" src={headerImage} alt="contact" />
+                        <img width="35" height="35" className="rounded-pill border" src={image || headerImage} alt="contact" />
                         <div className="ms-2">
                             <div className="chat-name">{getShortName(name, 40)}</div>
-                            <div className="last-msg">{ status ? "Active Now" : "Offline"}</div>
+                            <div className="last-msg">{ connectionStatus ? "Active Now" : "Offline"}</div>
                         </div>
                     </div>
                 </Col>
@@ -88,7 +100,7 @@ const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connect
                         </div>
                     </div>
                 </Col>
-                {/* <Col md={12}> <small>{ connectionStatus }</small></Col> */}
+                
             </Row>
             <div className="inside">
                  <div className="chat-div py-3" id={elId}>
@@ -117,6 +129,7 @@ const Chat = ({ auth, contact, messages, setMessages, sendMessage: send, connect
             </div>
             <MessageModal obj={msgModal} setShow={setMsgModal} />
             <ImageModal obj={viewImage} setShow={setViewImage} />
+            <SendFileModal obj={photoModal} setShow={setPhotoModal} sendMessage={sendMessage} />
         </div>
      );
 }

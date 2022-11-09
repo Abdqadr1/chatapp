@@ -51,4 +51,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number"));
         return new MyUserDetails(byPhoneNumber);
     }
+
+    public void updateStatus(String number) {
+        User byPhoneNumber = getByPhoneNumber(number)
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number"));
+        byPhoneNumber.setLastSeen(LocalDateTime.now());
+        userRepository.save(byPhoneNumber);
+    }
 }

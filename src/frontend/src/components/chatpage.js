@@ -8,30 +8,57 @@ import Contacts from "./contacts";
 import { StompSessionProvider, useSubscription, useStompClient } from "react-stomp-hooks";
 import { addMessage, getConversationFromStorage, setConversationToStorage, updateSentMessage } from "./utilities";
 import uuid from 'react-uuid';
-const ChatPage = ({ connectionStatus, url, auth } ) => {
+
+const ChatPage = ({ url, auth } ) => {
     const [currentChat, setCurrentChat] = useState({});
     const [timer, setTimer] = useState();
     const [abortRef] = [useRef()];
     const [contacts, setContacts] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [connectionStatus, setConnectionStatus] = useState(false);
     const navigate = useNavigate();
 
     const stompClient = useStompClient();
 
-    const sendMessage = (msg) => {
-        const id = uuid();
+    const uploadPhoto = (image, file, send) => {
+        const data = new FormData();
+        data.append("image", file);
+        axios.put(`${url}/api/upload-photos/${auth.phoneNumber}`, data,
+            { signal: abortRef?.current.signal })
+            .then(res => {
+                send(res.data);
+            })
+            .catch(() => alert("could not upload photo"));
+    }
+
+    const publishMessage = (msg, id) => {
         try {
             stompClient.publish({
                 destination: `/app/chat/${id}`, body: JSON.stringify(msg)
             });
-            msg.id = id;
-            addMessage(auth.phoneNumber, msg, currentChat.phoneNumber);
+            addMessage(auth.phoneNumber, {...msg, id}, currentChat.phoneNumber);
             let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
             listContacts(allContacts);
         } catch (e) {
             console.info(e);
         }
     }
+
+    const sendMessage = (msg, file) => {
+        const id = uuid();
+        if (msg?.image) {
+            setMessages(s => ([...s, { ...msg, id, progress: 1}]));
+            uploadPhoto(msg.image, file, (imageName) => {
+                msg.image = imageName;
+                msg.photo = imageName;
+                publishMessage(msg);
+            });
+            return;
+        }
+        setMessages(s => ([...s, { ...msg, id, }]));
+        publishMessage(msg, id);
+    }
+
 
     const listContacts = (allContacts) => {
         const list = [];
@@ -48,6 +75,22 @@ const ChatPage = ({ connectionStatus, url, auth } ) => {
         setContacts(list);
     }
 
+    const searchContact = (text) => {
+        const [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
+        const list = [];
+        allContacts.filter(c => c.name.includes(text) || c.key.includes(text))
+            .forEach(c => {
+            list.push({
+                key: c.key,
+                last_msg: c?.last_msg || 'image',
+                name: c?.name || c.key,
+                unread: 0,
+                phoneNumber: c.key,
+                image: ""
+            })
+        })
+        setContacts(list);
+    }
     useLayoutEffect(() => {
         if (!auth?.access_token || !auth?.phoneNumber) navigate("/login");
         let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
@@ -57,11 +100,23 @@ const ChatPage = ({ connectionStatus, url, auth } ) => {
     const [receiveDest, sentDest] = [`/topic/messages/${auth.phoneNumber}`, `/topic/sent/${auth.phoneNumber}`]
     useSubscription([sentDest, receiveDest], (msg) => {
         const obj = JSON.parse(msg.body);
-        console.log(obj);
         const [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
         const destination = msg.headers.destination;
         if (destination === sentDest) {
-            updateSentMessage(auth.phoneNumber, msg);
+            updateSentMessage(auth.phoneNumber, obj);
+            if (currentChat.phoneNumber === obj.receiver) {
+                setMessages(s => {
+                    const index = s.findIndex(c => c.id === obj.key);
+                    if (index > -1) {
+                        const old = s[index];
+                        console.log(obj)
+                        s[index] = { ...old, ...obj };
+                        console.log({ ...old, ...obj });
+                    }
+                    return  [...s]
+                })
+            }
+            
             return;
         }
         addMessage(auth.phoneNumber, obj, obj.sender);
@@ -76,9 +131,10 @@ const ChatPage = ({ connectionStatus, url, auth } ) => {
         if (currentChat.phoneNumber) {
             clearInterval(timer);
             const time = setInterval(() => {
-                axios.get(`${url}/api/get-contact-status/${currentChat.phoneNumber}`, { signal: abortRef?.current.signal })
+                axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}/${currentChat.phoneNumber}`,
+                    { signal: abortRef?.current.signal })
                     .then(res => {
-                        setCurrentChat(s => ({ ...s, ...res.data }));
+                        setConnectionStatus(res.data?.status);
                     })
                     .catch(() => console.log("could not fetch user status"));
             }, 5000);
@@ -134,7 +190,7 @@ const ChatPage = ({ connectionStatus, url, auth } ) => {
                 <Row className="justify-content-center chat-row">
                     <Col sm="3" className="border chat-col px-0">
                         <Contacts setCurrentChat={setCurrentChat} contacts={contacts}
-                            setContacts={setContacts} auth={auth} />
+                            setContacts={setContacts} auth={auth} searchContact={searchContact} />
                     </Col>
                     <Col sm="6" className="border chat-col">
                         <Chat auth={auth} contact={currentChat} messages={messages}
@@ -166,7 +222,7 @@ const StompWrapper = ()  => {
         <StompSessionProvider url={socketUrl + "/ws"} connectHeaders={{ "Authorization": "Bearer ..." }} connectionTimeout={5000}
             debug={(str) => { console.log(str)}}
             >
-                <ChatPage connectionStatus={"connectionStatus"} url={socketUrl} auth={auth} />
+                <ChatPage url={socketUrl} auth={auth} />
         </StompSessionProvider>
     )
 }

@@ -10,4 +10,8 @@ public interface MessageRepo extends MongoRepository<Message, String> {
 
     @Query("{ $or: [{'receiver': ?0, 'sender': ?1}, {'sender' : ?0, 'receiver': ?1}] }")
     List<Message> getMessagesBetween(String from, String to);
+
+    @Query("{ $or: [{'receiver': ?0}, {'sender': ?0}] }")
+    List<Message> getAllMessages(String number);
+
 }
