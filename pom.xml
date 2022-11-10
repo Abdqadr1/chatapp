@@ -78,4 +78,11 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>prod</id>
+
+		</profile>
+	</profiles>
+
 </project>

@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+#production details
+application-prod.yml
+src/main/resources/application-prod.yml

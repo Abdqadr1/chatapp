@@ -43,6 +43,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
     }, [messages])
 
     const sendMessage = (messageFromModal, file) => {
+        const mod = file ? messageFromModal : {};
         const msg = {
             text: inputRef?.current?.value || "",
             sender: myPhoneNumber,
@@ -50,7 +51,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
             image: "",
             time: new Date(),
             status: "PENDING",
-            ...messageFromModal
+            ...mod
         }
         send(msg, file);
         inputRef.current.value = "";
@@ -115,7 +116,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                 <input onChange={handleSelectImage} type="file" name="at-files" className="d-none" id="at-files"
                     accept="image/jpg, image/png, image/jpeg" />
                 <div className="right">
-                    <label htmlFor="at-files" className="me-2  d-flex align-items-center">
+                    <label htmlFor="at-files" className="me-2 d-flex align-items-center">
                         <Icon icon="ooui:attachment" className="write-icon" title="attach files" />
                     </label>
                     <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..."

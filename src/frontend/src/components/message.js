@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Col, Row } from "react-bootstrap";
 
-const Message = ({ text, image, file, time, sender, setViewImage, userPhone,status }) => {
+const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userPhone,status }) => {
     const isSent = sender === userPhone;
     const dir = isSent ? "justify-content-end" : "justify-content-start";
     const timeDir = isSent ? "text-end" : "text-start";
@@ -24,8 +24,13 @@ const Message = ({ text, image, file, time, sender, setViewImage, userPhone,stat
                 <div className={"d-flex "+dir+" w-100"}>
                     <div className="message-div">
                         <div className='message-container'>
-                        {/* TODO: Loading progress */}
-                            { image ? <img onClick={viewImage} src={image} alt='message' className="msg-image" /> : '' }
+                            {image ?
+                                <figure className="position-relative mb-1">
+                                    <img onClick={viewImage} src={imagePath || image} alt='message' className="msg-image" />
+                                    <figcaption className={`image-progress progress${id}`}></figcaption>
+                                </figure>
+                                : ''
+                            }
                             { text ? <div className={"text-start message-text"}>{text}</div> : '' }
                         </div>
                         <div className={timeDir + " message-time"}>

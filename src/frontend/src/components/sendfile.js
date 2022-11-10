@@ -25,7 +25,7 @@ const SendFileModal = ({ obj, setShow, callback, sendMessage }) => {
             <Modal.Header closeButton>
             </Modal.Header>
             <Modal.Body className="text-center">
-                <img src={obj.image} alt='message' height={400} className="modal-image" />
+                <img src={obj.image} alt='message' height={400} className="modal-image mb-2" />
                   <div className="write-div d-flex align-items-center justify-content-between bg-light border">
                     <div className="right">
                         <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..."

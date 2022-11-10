@@ -20,15 +20,32 @@ const ChatPage = ({ url, auth } ) => {
 
     const stompClient = useStompClient();
 
-    const uploadPhoto = (image, file, send) => {
+    const uploadPhoto = (image, id, file, send) => {
         const data = new FormData();
         data.append("image", file);
         axios.put(`${url}/api/upload-photos/${auth.phoneNumber}`, data,
-            { signal: abortRef?.current.signal })
+            {
+                signal: abortRef?.current.signal,
+                onUploadProgress: (progressEvent) => {
+                    const progressRef = document.querySelector(`.progress${id}`);
+                    const percent = (progressEvent.loaded === progressEvent.total) ? 0
+                        : Math.round(progressEvent.loaded * 100 / progressEvent.total);
+                    progressRef.style.width = `${percent}%`;
+                }
+            })
             .then(res => {
                 send(res.data);
             })
-            .catch(() => alert("could not upload photo"));
+            .catch(() => {
+                alert("could not upload photo");
+                setMessages(s => {
+                    const find = s.find(c => c.id === id);
+                    if (find) {
+                        find.status = "REJECTED";
+                    }
+                    return [...s];
+                })
+            });
     }
 
     const publishMessage = (msg, id) => {
@@ -47,11 +64,11 @@ const ChatPage = ({ url, auth } ) => {
     const sendMessage = (msg, file) => {
         const id = uuid();
         if (msg?.image) {
-            setMessages(s => ([...s, { ...msg, id, progress: 1}]));
-            uploadPhoto(msg.image, file, (imageName) => {
+            setMessages(s => ([...s, { ...msg, id}]));
+            uploadPhoto(msg.image, id, file, (imageName) => {
                 msg.image = imageName;
                 msg.photo = imageName;
-                publishMessage(msg);
+                publishMessage(msg, id);
             });
             return;
         }
@@ -109,7 +126,6 @@ const ChatPage = ({ url, auth } ) => {
                     const index = s.findIndex(c => c.id === obj.key);
                     if (index > -1) {
                         const old = s[index];
-                        console.log(obj)
                         s[index] = { ...old, ...obj };
                         console.log({ ...old, ...obj });
                     }

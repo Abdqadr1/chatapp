@@ -20,4 +20,9 @@ spring:
       port: 27017
       host: localhost
       uri: mongodb://localhost:27017/qadr
-
+aws:
+  s3:
+    access-key:
+    secrety-key:
+    bucket-name:
+    bucket-region: "us-east-1"

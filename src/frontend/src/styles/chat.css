@@ -71,3 +71,14 @@
     width: auto;
     max-width: calc(100% - 1px);
 }
+.image-progress{
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    max-width: 100%;
+    line-height: 1;
+    width: 0%;
+    height: 3px;
+    background-color: rgb(237, 56, 56);
+    font-size: smaller;
+}
