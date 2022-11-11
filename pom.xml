@@ -81,7 +81,11 @@
 	<profiles>
 		<profile>
 			<id>prod</id>
-
+			<properties>
+				<spring.profile.active>
+					prod
+				</spring.profile.active>
+			</properties>
 		</profile>
 	</profiles>
 

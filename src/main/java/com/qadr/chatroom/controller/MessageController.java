@@ -39,8 +39,8 @@ public class MessageController {
     public String uploadPhotos(@RequestParam("image") MultipartFile file,
                                @PathVariable("number") String number) throws InterruptedException, IOException {
         if (file == null || file.isEmpty()) return "";
-        System.out.println(file.getContentType());
         String fileName = generateFileName(number, file);
+        System.out.println(fileName);
         String folder = CHAT_FOLDER_NAME + "/" + number;
         amazonS3Util.uploadFile(folder, fileName, file.getInputStream());
         return fileName;
@@ -58,7 +58,10 @@ public class MessageController {
         name.append(calendar.get(Calendar.HOUR_OF_DAY)).append("_");
         name.append(calendar.get(Calendar.MINUTE)).append("_");
         name.append(calendar.get(Calendar.SECOND));
-        return name.toString();
+        String fileName = file.getOriginalFilename();
+        int dot = fileName.lastIndexOf('.');
+        String ext = fileName.substring(dot);
+        return name.append(ext).toString();
     }
 
 

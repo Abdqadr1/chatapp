@@ -14,8 +14,9 @@ const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userP
         if (status === "DELIVERED") icon = <Icon className="ms-2" icon="emojione-v1:left-check-mark" />;
     }
     const viewImage = e => {
+        const img = imagePath ? imagePath : image;
         setViewImage(s => ({
-            ...s, image, show: true
+            ...s, image: img, show: true
         }))
     }
     return (
@@ -24,7 +25,7 @@ const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userP
                 <div className={"d-flex "+dir+" w-100"}>
                     <div className="message-div">
                         <div className='message-container'>
-                            {image ?
+                            {(image || imagePath) ?
                                 <figure className="position-relative mb-1">
                                     <img onClick={viewImage} src={imagePath || image} alt='message' className="msg-image" />
                                     <figcaption className={`image-progress progress${id}`}></figcaption>

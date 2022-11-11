@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,7 +72,7 @@ public class MessageService {
         public String getImagePath (){
             return s3Properties.getURI() +
                     CHAT_FOLDER_NAME + "/" +
-                    sender + "/" + photo;
+                    URLEncoder.encode(sender, StandardCharsets.UTF_8) + "/" + photo;
         }
 
     }

@@ -16,10 +16,6 @@ const SendFileModal = ({ obj, setShow, callback, sendMessage }) => {
         hideModal();
     }
 
-    const sendTheMsg = e => {
-        if (e.keyCode === 13 && e.target.value !== "") sendMessage();
-    }
-
     return ( 
         <Modal show={obj.show} onHide={hideModal}>
             <Modal.Header closeButton>
@@ -28,8 +24,7 @@ const SendFileModal = ({ obj, setShow, callback, sendMessage }) => {
                 <img src={obj.image} alt='message' height={400} className="modal-image mb-2" />
                   <div className="write-div d-flex align-items-center justify-content-between bg-light border">
                     <div className="right">
-                        <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..."
-                            onKeyDown={sendTheMsg} />
+                        <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..." />
                     </div>
                     <Icon icon="akar-icons:send" title="send" className="write-icon" onClick={sendMsg} />
             </div>
