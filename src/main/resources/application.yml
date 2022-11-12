@@ -22,7 +22,7 @@ spring:
       uri: mongodb://localhost:27017/qadr
 aws:
   s3:
-    access-key:
-    secret-key:
+    access-key: AKIA2K65PJYBFLDDTZ2H
+    secret-key: 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
     bucket-name: "spring-chat-room"
     bucket-region: "us-east-1"

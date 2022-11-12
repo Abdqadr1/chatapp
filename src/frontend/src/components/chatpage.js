@@ -20,10 +20,10 @@ const ChatPage = ({ url, auth } ) => {
 
     const stompClient = useStompClient();
 
-    const uploadPhoto = (image, id, file, send) => {
+    const uploadFile = (name, id, file, send) => {
         const data = new FormData();
-        data.append("image", file);
-        axios.put(`${url}/api/upload-photos/${auth.phoneNumber}`, data,
+        data.append("file", file, name);
+        axios.put(`${url}/api/upload-files/${auth.phoneNumber}`, data,
             {
                 signal: abortRef?.current.signal,
                 onUploadProgress: (progressEvent) => {
@@ -33,16 +33,12 @@ const ChatPage = ({ url, auth } ) => {
                     progressRef.style.width = `${percent}%`;
                 }
             })
-            .then(res => {
-                send(res.data);
-            })
+            .then(res => send(res.data))
             .catch(() => {
-                alert("could not upload photo");
+                console.error("could not upload file");
                 setMessages(s => {
                     const find = s.find(c => c.id === id);
-                    if (find) {
-                        find.status = "REJECTED";
-                    }
+                    if (find) find.status = "REJECTED";
                     return [...s];
                 })
             });
@@ -63,11 +59,15 @@ const ChatPage = ({ url, auth } ) => {
 
     const sendMessage = (msg, file) => {
         const id = uuid();
-        if (msg?.image) {
-            setMessages(s => ([...s, { ...msg, id}]));
-            uploadPhoto(msg.image, id, file, (imageName) => {
-                msg.image = imageName;
-                msg.photo = imageName;
+        if (msg?.image || msg?.wav) {
+            setMessages(s => ([...s, { ...msg, id }]));
+            uploadFile(msg.fileName, id, file, (fileName) => {
+                if (msg?.type === "image") {
+                    msg.photo = fileName;
+                }
+                if (msg?.type === "audio") {
+                    msg.audio = fileName;
+                }
                 publishMessage(msg, id);
             });
             return;

@@ -3,7 +3,7 @@ const MessageModal = ({ obj, setShow, callback }) => {
     const hideModal = () => setShow(s => ({ ...s, show: false }));
     return ( 
         <Modal show={obj.show} onHide={hideModal}>
-            <Modal.Header closeButton={false}>
+            <Modal.Header closeButton={false} className="py-2">
                 <Modal.Title>{obj.title}</Modal.Title>
             </Modal.Header>
             <Modal.Body className="text-center">

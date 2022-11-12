@@ -8,12 +8,14 @@ import { useEffect, useRef, useState } from "react";
 import MessageModal from "./message_modal";
 import ImageModal from "./image-modal";
 import SendFileModal from "./sendfile";
+import AudioModal from "./audio-modal";
 const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) => {
     const { name, image, phoneNumber } = contact;
     const { access_token, phoneNumber: myPhoneNumber } = auth;
     const [viewImage, setViewImage] = useState({ show: false, image: '' });
     const [msgModal, setMsgModal] = useState({ show: false, title: "File error", message: "File type not supported." });
     const [photoModal, setPhotoModal] = useState({ show: false, image: '' });
+    const [audioModal, setAudioModal] = useState({ show: false});
     const [isMessage, setIsMessage] = useState(false);
     const [inputRef] = [useRef()]
     const elId = "chatDiv";
@@ -42,7 +44,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
         scrollToBottom(elId);
     }, [messages])
 
-    const sendMessage = (messageFromModal, file) => {
+    const sendMessage = (messageFromModal, file={}) => {
         const mod = file ? messageFromModal : {};
         const msg = {
             text: inputRef?.current?.value || "",
@@ -66,13 +68,15 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
         if (e.keyCode === 13 && e.target.value !== "") sendMessage();
     }
 
-    const doMicrophone = e => {
-        console.log("microphone....")
-    }
-
     const changeIcon = e => {
         if (e.target.value !== "") setIsMessage(true);
         if (e.target.value === "") setIsMessage(false);
+    }
+
+    const record = e => {
+        if (contact.phoneNumber) {
+            setAudioModal(s => ({ ...s, show: true }));
+        }
     }
 
 
@@ -125,12 +129,14 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                 {
                     isMessage ? <Icon icon="akar-icons:send" title="send" className="write-icon" onClick={sendMessage} /> :
 
-                    <Icon icon="bxs:microphone" title="record" className="write-icon" onClick={doMicrophone} />
+                        <Icon icon="bxs:microphone" title="record" className="write-icon"
+                            onClick={record} />
                 }
             </div>
             <MessageModal obj={msgModal} setShow={setMsgModal} />
             <ImageModal obj={viewImage} setShow={setViewImage} />
             <SendFileModal obj={photoModal} setShow={setPhotoModal} sendMessage={sendMessage} />
+            <AudioModal obj={audioModal} setShow={setAudioModal} sendMessage={sendMessage} />
         </div>
      );
 }

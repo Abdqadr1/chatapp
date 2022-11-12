@@ -2,7 +2,9 @@
   --secondary : #6c757d;
   --secondary-hover: #84888b;
   --light: #dde1e4;
-  --warning: #ffc107;
+  --warning: #e6b628;
+  --success: #198754;
+  --orange: #f47b18;
 }
 body {
 

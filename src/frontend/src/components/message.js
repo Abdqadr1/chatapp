@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Col, Row } from "react-bootstrap";
 
-const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userPhone,status }) => {
+const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userPhone,status, audio, wav }) => {
     const isSent = sender === userPhone;
     const dir = isSent ? "justify-content-end" : "justify-content-start";
     const timeDir = isSent ? "text-end" : "text-start";
@@ -19,6 +19,7 @@ const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userP
             ...s, image: img, show: true
         }))
     }
+    const soundURL = wav ? URL.createObjectURL(wav) : audio;
     return (
         <Row className={dir + " mx-0"}>
             <Col sm={10}>
@@ -27,12 +28,20 @@ const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userP
                         <div className='message-container'>
                             {(image || imagePath) ?
                                 <figure className="position-relative mb-1">
-                                    <img onClick={viewImage} src={imagePath || image} alt='message' className="msg-image" />
+                                    <img onClick={viewImage} src={image || imagePath} alt='message' className="msg-image" />
                                     <figcaption className={`image-progress progress${id}`}></figcaption>
                                 </figure>
                                 : ''
                             }
-                            { text ? <div className={"text-start message-text"}>{text}</div> : '' }
+                            {text ? <div className={"text-start message-text"}>{text}</div> : ''}
+                            {
+                                (audio || wav) ? 
+                                    <div className="position-relative mb-1">
+                                        <audio src={soundURL} controls></audio>
+                                        <div className={`image-progress progress${id}`}></div>
+                                    </div>
+                                : ""
+                            }
                         </div>
                         <div className={timeDir + " message-time"}>
                             <small>{time}</small>

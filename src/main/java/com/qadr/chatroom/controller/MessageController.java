@@ -35,8 +35,8 @@ public class MessageController {
         messageService.saveAndSend(message, key);
     }
 
-    @PutMapping("/api/upload-photos/{number}")
-    public String uploadPhotos(@RequestParam("image") MultipartFile file,
+    @PutMapping("/api/upload-files/{number}")
+    public String uploadPhotos(@RequestParam("file") MultipartFile file,
                                @PathVariable("number") String number) throws InterruptedException, IOException {
         if (file == null || file.isEmpty()) return "";
         String fileName = generateFileName(number, file);
@@ -48,8 +48,15 @@ public class MessageController {
 
 
 
+
+    public String generatePrefix(String contentType){
+        if(contentType.contains("image")) return "IMG_";
+        if(contentType.contains("audio")) return "AUDIO_";
+        return "FILE_";
+    }
+
     public String generateFileName(String phoneNumber, MultipartFile file){
-        String prefix = file.getContentType().contains("image") ? "IMG_" : "FILE_";
+        String prefix = generatePrefix(file.getContentType());
         var name = new StringBuilder(prefix + phoneNumber.substring(1) + "_");
         Calendar calendar = Calendar.getInstance();
         name.append(calendar.get(Calendar.YEAR)).append("_");
@@ -63,9 +70,4 @@ public class MessageController {
         String ext = fileName.substring(dot);
         return name.append(ext).toString();
     }
-
-
-
-
-
 }

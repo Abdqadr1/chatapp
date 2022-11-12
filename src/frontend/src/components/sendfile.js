@@ -6,11 +6,13 @@ const SendFileModal = ({ obj, setShow, callback, sendMessage }) => {
     const [inputRef] = [useRef()];
 
     const sendMsg = e => {
-         const msg = {
+        const msg = {
+            type: "image",
             text: inputRef?.current?.value || "",
             image: obj?.image,
             time: new Date(),
-            status: "PENDING"
+            status: "PENDING",
+            fileName: obj.file.name
         }
         sendMessage(msg, obj?.file);
         hideModal();
@@ -27,7 +29,7 @@ const SendFileModal = ({ obj, setShow, callback, sendMessage }) => {
                         <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..." />
                     </div>
                     <Icon icon="akar-icons:send" title="send" className="write-icon" onClick={sendMsg} />
-            </div>
+                </div>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="danger" onClick={hideModal}> Close </Button>

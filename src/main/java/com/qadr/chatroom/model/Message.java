@@ -24,7 +24,7 @@ public class Message {
     @Id
     private String id;
     private String sender, receiver, text;
-    private String photo;
+    private String photo, audio;
     private Date date;
     private MessageStatus status;
 
@@ -46,6 +46,7 @@ public class Message {
         photo = msg.getPhoto();
         date = msg.getDate();
         status = msg.getStatus();
+        audio = msg.getAudio();
     }
 
 }
