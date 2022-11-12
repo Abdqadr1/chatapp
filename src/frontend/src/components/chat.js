@@ -19,6 +19,8 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
     const [isMessage, setIsMessage] = useState(false);
     const [inputRef] = [useRef()]
     const elId = "chatDiv";
+    const imageAcceptArray = ["image/png", "image/jpg", "image/jpeg"];
+    const docAcceptArray = ["application", "text/plain"];
 
     const handleSelectImage = (event) => {
         if (!phoneNumber) {
@@ -27,15 +29,42 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
         }
         const input = event.target;
         const file = input.files[0];
-        if (isFileValid(file)) {
+        const checkValid = isFileValid(file, imageAcceptArray);
+        if (checkValid.validity) {
             showThumbnail(file, (data) => {
                 setPhotoModal(s=> ({...s, show: true, image: data, file}))
             });
         } else {
             setMsgModal(s => ({
-                ...s,
-                show: true,
-                message: "File not valid"
+                ...s,show: true,
+                message: checkValid.message
+            }))
+        }
+    }
+    const handleSelectDoc = event => {
+         if (!phoneNumber) {
+            event.preventDefault();
+            return;
+        }
+        const input = event.target;
+        const file = input.files[0];
+        const checkValid = isFileValid(file, docAcceptArray);
+        if (checkValid.validity) {
+            const msg = {
+                type: "doc",
+                text: inputRef?.current?.value || "",
+                sender: myPhoneNumber,
+                receiver: phoneNumber,
+                image: "",
+                time: new Date(),
+                status: "PENDING",
+                doc: file,
+            }
+            send(msg, file);
+        } else {
+            setMsgModal(s => ({
+                ...s,show: true,
+                message: checkValid.message
             }))
         }
     }
@@ -117,12 +146,24 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                 </div>
             </div>
             <div className="write-div d-flex align-items-center justify-content-between bg-light border">
-                <input onChange={handleSelectImage} type="file" name="at-files" className="d-none" id="at-files"
+                <input onChange={handleSelectImage} type="file" className="d-none" id="at-images"
                     accept="image/jpg, image/png, image/jpeg" />
+
+                <input onChange={handleSelectDoc} type="file" className="d-none" id="at-documents"
+                    accept="*" />
+
                 <div className="right">
-                    <label htmlFor="at-files" className="me-2 d-flex align-items-center">
+                    <div className="file-drop">
                         <Icon icon="ooui:attachment" className="write-icon" title="attach files" />
-                    </label>
+                        <div className="attach-dropdown">
+                            <label htmlFor="at-images" className="files-label bg-danger text-light" title="Images">
+                                <Icon icon="bi:images" />
+                            </label>
+                            <label htmlFor="at-documents" className="files-label bg-info text-danger" title="Documents">
+                                <Icon icon="akar-icons:file" />
+                            </label>
+                        </div>
+                    </div>
                     <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..."
                         onInput={changeIcon} onKeyDown={sendTheMessage} />
                 </div>

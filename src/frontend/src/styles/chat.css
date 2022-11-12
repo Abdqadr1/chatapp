@@ -116,4 +116,33 @@
 .recorder1-div{
     animation: recording1 0.8s ease-in-out 0s infinite alternate-reverse none;
 }
+.file-drop{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: .2em;
+}
+.file-drop:hover .attach-dropdown{
+    display: flex;
+}
+.attach-dropdown{
+    display: none;
+    position: absolute;
+    bottom: 8px;
+    left: -10px;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    transition: display 0.5s;
+}
+.files-label{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+}
 

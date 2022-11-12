@@ -59,15 +59,12 @@ const ChatPage = ({ url, auth } ) => {
 
     const sendMessage = (msg, file) => {
         const id = uuid();
-        if (msg?.image || msg?.wav) {
+        if (msg?.image || msg?.wav || msg?.doc) {
             setMessages(s => ([...s, { ...msg, id }]));
             uploadFile(msg.fileName, id, file, (fileName) => {
-                if (msg?.type === "image") {
-                    msg.photo = fileName;
-                }
-                if (msg?.type === "audio") {
-                    msg.audio = fileName;
-                }
+                if (msg?.type === "image") msg.photo = fileName;
+                if (msg?.type === "audio") msg.audio = fileName;
+                if (msg?.type === "doc") msg.document = fileName;
                 publishMessage(msg, id);
             });
             return;

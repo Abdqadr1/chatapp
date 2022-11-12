@@ -18,14 +18,18 @@ export function listFormData(data){
       
 }
 
-export function isFileValid(file) {
-    if (file.size > 1048576) {
-        return false;
+export function isFileValid(file, accept, size = 1048576) {
+    const ret ={validity: true}
+    if (file.size > size) {
+        ret.validity = false;
+        const maxSize = Number(size/1000).toFixed(2);
+        ret.message = `File size is too large, max size is ${maxSize} KB`;
+        return ret;
     }
-    if (file.type !== "image/png" && file.type !== "image/jpg" && file.type !== "image/jpeg") {
-        return false;
-    }
-    return true;
+    const findIndex = accept.findIndex(c => c === file.type || file.type.includes(c));
+    ret.validity = findIndex > -1;
+    ret.message = "File type not supported";
+    return ret;
 }
 
 export const SPINNERS_BORDER = <Spinner animation="border" size="sm" className="d-block m-auto" style={{width: "4rem", height: "4rem"}} />
