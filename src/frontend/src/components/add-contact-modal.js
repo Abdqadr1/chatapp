@@ -32,11 +32,9 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
         btnRef.current.innerHTML = SPINNERS_BORDER_HTML;
         axios.get(`${url}/search-number/${number}`)
             .then(res => {
-                console.log(res.data);
-                const { phoneNumber, firstName, lastName, photo } = res.data;
+                const { phoneNumber, name, photo } = res.data;
                 const c = {
-                    key: phoneNumber,
-                    name: `${firstName} ${lastName}`,
+                    key: phoneNumber,name,
                     phoneNumber: phoneNumber,
                     last_msg: "",
                     time: new Date(),

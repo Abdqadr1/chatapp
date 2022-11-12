@@ -45,6 +45,7 @@ const ChatPage = ({ url, auth } ) => {
     }
 
     const publishMessage = (msg, id) => {
+        console.log(msg);
         try {
             stompClient.publish({
                 destination: `/app/chat/${id}`, body: JSON.stringify(msg)

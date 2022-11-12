@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import { Accordion, Col, Row } from "react-bootstrap";
 import headerImage from "../images/male-av.png";
 import "../styles/info.css";
-import { downloadFile } from "./utilities";
+import { downloadFile, fileTypeObj } from "./utilities";
 import { useState } from "react";
 import ImageModal from "./image-modal";
 import { Link } from "react-router-dom";
@@ -60,14 +60,7 @@ const ContactInfo = () => {
      );
 }
 
-const obj = {
-        txt: "bi:filetype-txt",
-        pdf: "ant-design:file-pdf-filled",
-        doc: "bxs:file-doc",
-        docx: "bi:filetype-docx",
-        csv: "bi:filetype-csv",
-        audio: "dashicons:media-audio",
-    }
+
 const FileElement = ({ file, setFiles }) => {
     const { name, source, isDownloaded } = file;
     const download = e => {
@@ -79,7 +72,7 @@ const FileElement = ({ file, setFiles }) => {
     }
     
     const ext = name.substring(name.lastIndexOf('.') + 1);
-    const path = obj?.[ext];
+    const path = fileTypeObj?.[ext];
     const colours = ['text-danger', 'text-warning', 'text-primary', 'text-secondary']
     let col = colours[Math.floor(Math.random()*colours.length)];
     return (

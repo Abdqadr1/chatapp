@@ -12,15 +12,13 @@ import java.time.LocalDateTime;
 public class UserDTO {
 
     private String phoneNumber;
-    private String firstName;
-    private String lastName;
+    private String name;
     private String photo;
     private LocalDateTime lastSeen;
 
     public UserDTO (User user){
         phoneNumber = user.getPhoneNumber();
-        firstName = user.getFirstName();
-        lastName = user.getLastName();
+        name = user.getName();
         photo = user.getPhoto();
         lastSeen = user.getLastSeen();
     }

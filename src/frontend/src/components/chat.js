@@ -52,7 +52,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
         if (checkValid.validity) {
             const msg = {
                 type: "doc",
-                text: inputRef?.current?.value || "",
+                text: "",
                 sender: myPhoneNumber,
                 receiver: phoneNumber,
                 image: "",
@@ -140,7 +140,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                  <div className="chat-div py-3" id={elId}>
                     {
                         messages.length > 0 ?
-                            messages.map((msg, i) => <Message key={i} userPhone={myPhoneNumber} {...msg} setViewImage={setViewImage} />) :
+                            messages.map(msg => <Message key={msg.id} userPhone={myPhoneNumber} {...msg} setViewImage={setViewImage} />) :
                         <div className="text-center mt-4"><small>No message found. Start conversation</small></div>
                     }
                 </div>
@@ -168,7 +168,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                         onInput={changeIcon} onKeyDown={sendTheMessage} />
                 </div>
                 {
-                    isMessage ? <Icon icon="akar-icons:send" title="send" className="write-icon" onClick={sendMessage} /> :
+                    isMessage ? <Icon icon="akar-icons:send" title="send" className="write-icon" onClick={()=> sendMessage()} /> :
 
                         <Icon icon="bxs:microphone" title="record" className="write-icon"
                             onClick={record} />

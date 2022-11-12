@@ -1,7 +1,9 @@
 import { Icon } from "@iconify/react";
 import { Col, Row } from "react-bootstrap";
+import { fileTypeObj } from "./utilities";
 
-const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userPhone,status, audio, wav }) => {
+const Message = ({ text, image, imagePath, id, time, sender, setViewImage,
+    userPhone, status, audioPath, wav, doc, docPath, document:  docment}) => {
     const isSent = sender === userPhone;
     const dir = isSent ? "justify-content-end" : "justify-content-start";
     const timeDir = isSent ? "text-end" : "text-start";
@@ -19,7 +21,33 @@ const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userP
             ...s, image: img, show: true
         }))
     }
-    const soundURL = wav ? URL.createObjectURL(wav) : audio;
+    const soundURL = wav ? URL.createObjectURL(wav) : audioPath;
+    const downloadDoc = e => {
+        if (docPath) {
+            // create "a" HTML element with href to file & click
+            const link = document.createElement('a');
+            link.href = docPath;
+            link.setAttribute('download', docment); //or any other extension
+            link.setAttribute("target", "blank");
+            document.body.appendChild(link);
+            link.click();
+            // clean up "a" element & remove ObjectURL
+            document.body.removeChild(link);
+        }
+    }
+    let docEl = "";
+    if (doc || docPath) {
+        const name = doc?.name || docPath;
+        const ext = name.substring(name.lastIndexOf('.') + 1); 
+        let ic = fileTypeObj?.[ext] || "akar-icons:file";
+        const colours = ['text-danger', 'text-warning', 'text-primary', 'text-secondary']
+        let col = colours[Math.floor(Math.random()*colours.length)];
+        docEl = <div className="my-1 w-100 d-flex justify-content-start align-items-center py-1" onClick={downloadDoc}>
+            <Icon icon={ic} className={col} />
+            <small className={`ms-1 ${col}`}>document</small>
+        </div>
+    }
+    
     return (
         <Row className={dir + " mx-0"}>
             <Col sm={10}>
@@ -35,13 +63,14 @@ const Message = ({ text, image, imagePath, id, time, sender, setViewImage, userP
                             }
                             {text ? <div className={"text-start message-text"}>{text}</div> : ''}
                             {
-                                (audio || wav) ? 
+                                (audioPath || wav) ? 
                                     <div className="position-relative mb-1">
                                         <audio src={soundURL} controls></audio>
                                         <div className={`image-progress progress${id}`}></div>
                                     </div>
                                 : ""
                             }
+                            {docEl}
                         </div>
                         <div className={timeDir + " message-time"}>
                             <small>{time}</small>

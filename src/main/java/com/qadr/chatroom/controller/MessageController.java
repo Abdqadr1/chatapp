@@ -31,7 +31,6 @@ public class MessageController {
     @MessageMapping("/chat/{key}")
     public void sendMessage(@DestinationVariable String key,  @Payload SocketMessage message) {
         message.setStatus(MessageStatus.SENT);
-        System.out.println(message);
         messageService.saveAndSend(message, key);
     }
 
@@ -40,7 +39,7 @@ public class MessageController {
                                @PathVariable("number") String number) throws InterruptedException, IOException {
         if (file == null || file.isEmpty()) return "";
         String fileName = generateFileName(number, file);
-        System.out.println(fileName);
+//        System.out.println(fileName + file.getSize());
         String folder = CHAT_FOLDER_NAME + "/" + number;
         amazonS3Util.uploadFile(folder, fileName, file.getInputStream());
         return fileName;

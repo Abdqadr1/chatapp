@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 public class SocketMessage {
     private String sender, receiver, text;
-    private String photo, audio;
+    private String photo, audio, document;
     private Date date;
     private MessageStatus status;
 

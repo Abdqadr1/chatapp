@@ -31,12 +31,12 @@ public class MessageService {
     public void saveAndSend(SocketMessage msg, String key){
         Message message = new Message(msg);
         message.setDate(new Date());
-        messageRepo.save(message);
+        Message save = messageRepo.save(message);
 
-        simpleMessagingTemplate.convertAndSend("/topic/messages/"+message.getReceiver(), message);
+        simpleMessagingTemplate.convertAndSend("/topic/messages/"+message.getReceiver(), save);
+        message.setKey(key);
         simpleMessagingTemplate.convertAndSend(
-                "/topic/sent/"+message.getSender(),
-                new MessageReport(message, key)
+                "/topic/sent/"+message.getSender(), message
         );
     }
 
@@ -44,36 +44,4 @@ public class MessageService {
         return messageRepo.getMessagesBetween(from, to);
     }
 
-    @Data
-    @NoArgsConstructor
-     class MessageReport{
-        private MessageStatus status;
-        private Date date;
-        private String id;
-        private String time;
-        private String key, sender;
-        private String receiver, photo;
-
-        public MessageReport (Message message, String key){
-            status = message.getStatus();
-            date = message.getDate();
-            id = message.getId();
-            receiver = message.getReceiver();
-            photo = message.getPhoto();
-            sender = message.getSender();
-            this.key = key;
-        }
-
-        public String getTime(){
-            SimpleDateFormat format = new SimpleDateFormat("dddd-MM-yy HH:mm:ss");
-            return format.format(date);
-        }
-
-        public String getImagePath (){
-            return s3Properties.getURI() +
-                    CHAT_FOLDER_NAME + "/" +
-                    URLEncoder.encode(sender, StandardCharsets.UTF_8) + "/" + photo;
-        }
-
-    }
 }

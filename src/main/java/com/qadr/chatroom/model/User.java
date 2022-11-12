@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 
@@ -23,9 +21,8 @@ public class User {
 
     @Indexed(unique = true)
     private String phoneNumber;
-    private String firstName;
-    private String lastName;
-    private String photo;
+    private String name;
+    private String photo="";
     private LocalDateTime lastSeen;
 
     private String password;

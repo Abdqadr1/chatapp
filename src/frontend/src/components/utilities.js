@@ -179,3 +179,12 @@ export const scrollToBottom = (id) => {
     const el = document.querySelector("#" + id);
     el.scrollIntoView({ behavior: "smooth", block: "end" });
 }
+
+export const fileTypeObj = {
+        txt: "bi:filetype-txt",
+        pdf: "ant-design:file-pdf-filled",
+        doc: "bxs:file-doc",
+        docx: "bi:filetype-docx",
+        csv: "bi:filetype-csv",
+        audio: "dashicons:media-audio",
+}

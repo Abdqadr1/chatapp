@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.net.URLEncoder;
@@ -24,14 +25,29 @@ public class Message {
     @Id
     private String id;
     private String sender, receiver, text;
-    private String photo, audio;
+    private String photo, audio, document;
     private Date date;
     private MessageStatus status;
+
+    @Transient
+    private String key;
 
     public String getImagePath (){
         return photo == null || photo.isEmpty() ? "" : Constants.S3_BASE_URI +
                 CHAT_FOLDER_NAME + "/" +
                 URLEncoder.encode(sender, StandardCharsets.UTF_8) + "/" + photo;
+    }
+
+    public String getAudioPath (){
+        return audio == null || audio.isEmpty() ? "" : Constants.S3_BASE_URI +
+                CHAT_FOLDER_NAME + "/" +
+                URLEncoder.encode(sender, StandardCharsets.UTF_8) + "/" + audio;
+    }
+
+    public String getDocPath (){
+        return document == null || document.isEmpty() ? "" : Constants.S3_BASE_URI +
+                CHAT_FOLDER_NAME + "/" +
+                URLEncoder.encode(sender, StandardCharsets.UTF_8) + "/" + document;
     }
 
     public String getTime(){
@@ -44,6 +60,8 @@ public class Message {
         sender = msg.getSender();
         receiver = msg.getReceiver();
         photo = msg.getPhoto();
+        audio = msg.getAudio();
+        document = msg.getDocument();
         date = msg.getDate();
         status = msg.getStatus();
         audio = msg.getAudio();
