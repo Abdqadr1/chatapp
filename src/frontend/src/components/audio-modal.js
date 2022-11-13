@@ -2,16 +2,18 @@ import { Icon } from "@iconify/react";
 import { useEffect } from "react";
 import { Modal } from "react-bootstrap";
 
-const AudioModal = ({ sendMessage, obj, setShow }) => {
+const AudioModal = ({ sendMessage, obj, setShow, myPhoneNumber, phoneNumber }) => {
     const hideModal = () => setShow(s => ({ ...s, show: false }));
 
     const sendMsg = (audio) => {
         const msg = {
-            type: "audio",
-            text: "",
-            image: '',
+            sender: myPhoneNumber,
+            receiver: phoneNumber,
+            image: "",
             time: new Date(),
             status: "PENDING",
+            type: "audio",
+            text: "",
             wav: audio,
             fileName: new Date().toTimeString()+".wav"
         }
@@ -41,10 +43,10 @@ const AudioModal = ({ sendMessage, obj, setShow }) => {
 
     useEffect(() => {
         if (obj.show) {
-            // const btn = document.querySelector("#stopRecordBtn");
-            // navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-            //     .then(str => handleAudioData(str, btn))
-            //     .catch((err) => console.log("Needs microphone permission", err));
+            const btn = document.querySelector("#stopRecordBtn");
+            navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+                .then(str => handleAudioData(str, btn))
+                .catch((err) => console.log("Needs microphone permission", err));
         }
 
     }, [obj.show]);
@@ -64,7 +66,7 @@ const AudioModal = ({ sendMessage, obj, setShow }) => {
                 <div className="d-flex justify-content-end px-3 mt-3">
                     <div className="bg-success text-white rounded-pill fs-6" title="stop and send recording"
                         id="stopRecordBtn" style={{width: "40px", height: "40px"}} >
-                        <Icon icon="akar-icons:send" onClick={sendMsg} className="mt-2" />
+                        <Icon icon="akar-icons:send" className="mt-2" />
                     </div>
                 </div>
                 

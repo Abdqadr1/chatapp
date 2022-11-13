@@ -3,13 +3,14 @@ import { Icon } from "@iconify/react";
 import { Accordion, Col, Row } from "react-bootstrap";
 import headerImage from "../images/male-av.png";
 import "../styles/info.css";
-import { downloadFile, fileTypeObj } from "./utilities";
-import { useState } from "react";
+import { downloadFile, fileTypeObj, getShortName } from "./utilities";
+import { useEffect, useState } from "react";
 import ImageModal from "./image-modal";
 import { Link } from "react-router-dom";
-const ContactInfo = () => {
-    const [images, setImages] = useState([...imageArray])
-    const [files, setFiles] = useState([...fileArray]);
+const ContactInfo = ({ messages, status, currentChat }) => {
+    const { name, image } = currentChat;
+    const [images, setImages] = useState([])
+    const [files, setFiles] = useState([]);
     const [viewImage, setViewImage] = useState({ show: false, image: '' });
 
     const handleClick = e => {
@@ -19,6 +20,27 @@ const ContactInfo = () => {
             image: headerImage
         }))
     }
+    useEffect(() => {
+        const imgs = [], files = [];
+        messages.forEach(el => {
+            if (el?.imagePath) {
+                imgs.push({
+                    name: el?.photo,
+                    source: el.imagePath,
+                    isDownloaded: true
+                });
+            }
+            if (el?.audio || el?.document) {
+                files.push({
+                    name: el?.audio || el?.document,
+                    source: el?.audioPath || el?.docPath
+                });
+            }
+        });
+        setImages(imgs);
+        setFiles(files);
+    }, [messages])
+    
 
     return ( 
         <div className="">
@@ -26,9 +48,9 @@ const ContactInfo = () => {
                 <small><Link className="text-decoration-none text-danger " to={"/logout"}>Logout</Link></small>
             </div>
             <div className="p-3 border-bottom">
-                <img src={headerImage} alt="contact" className="info-image" onClick={handleClick} />
-                <div className="contact-name">James Momoh</div>
-                <div className="contact-status">Active Now</div> 
+                <img src={image || headerImage} alt="contact" className="info-image" onClick={handleClick} />
+                <div className="contact-name">{name}</div>
+                <div className="contact-status">{ status ? "Active Now" : "Offline Now" }</div> 
             </div>
             <div className="p-3 media-div">
                 <Accordion defaultActiveKey="0">
@@ -62,13 +84,16 @@ const ContactInfo = () => {
 
 
 const FileElement = ({ file, setFiles }) => {
-    const { name, source, isDownloaded } = file;
+    const { name, source } = file;
     const download = e => {
-        console.log("downloading file ...");
-        downloadFile(source, 'png', (data) => {
-            file.isDownloaded = true;
-            setFiles(s => [...s]);
-        });
+        const link = document.createElement('a');
+            link.href = source;
+            link.setAttribute('download', name); //or any other extension
+            link.setAttribute("target", "blank");
+            document.body.appendChild(link);
+            link.click();
+            // clean up "a" element & remove ObjectURL
+            document.body.removeChild(link);
     }
     
     const ext = name.substring(name.lastIndexOf('.') + 1);
@@ -79,14 +104,11 @@ const FileElement = ({ file, setFiles }) => {
         <div className="d-flex justify-content-between my-2">
             <div className="d-flex align-items-center">
                 <Icon icon={path} className={"me-2 " + col} />
-                <div>{name}</div>
+                <div>{getShortName(name.toLowerCase(), 15)}</div>
             </div>
-            {
-                isDownloaded ? '' :
-                <div className="p-1 bg-light rounded-pill download-div" title="download" onClick={download} >
-                    <Icon icon="ci:download" />
-                </div>
-            }
+            <div className="p-1 bg-light rounded-pill download-div" title="download" onClick={download} >
+                <Icon icon="ci:download" />
+            </div>
         </div>
     );
 };
@@ -112,37 +134,5 @@ const ImageElement = ({ image, setImages }) => {
         </Col>
     )
 }
-
-const fileArray = [
-    {
-        name: "resume.pdf",
-        source: headerImage,
-        isDownloaded: false
-    },
-    {
-        name: 'design.doc',
-        source: headerImage,
-        isDownloaded: false
-    }
-    , {
-        name: 'project.txt',
-        source: headerImage,
-        isDownloaded: false
-    }
-]
-const imageArray = [
-    {
-        source: headerImage,
-        isDownloaded: false
-    },
-    {
-        source: headerImage,
-        isDownloaded: false
-    },
-    {
-        source: headerImage,
-        isDownloaded: false
-    }
-]
  
 export default ContactInfo;

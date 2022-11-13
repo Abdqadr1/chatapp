@@ -51,9 +51,10 @@ public class Message {
     }
 
     public String getTime(){
-        SimpleDateFormat format = new SimpleDateFormat("dddd-MM-yy HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format.format(date);
     }
+
 
     public Message (SocketMessage msg){
         text = msg.getText();

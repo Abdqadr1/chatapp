@@ -100,20 +100,38 @@ export const downloadFile = (url, ext, cb) => {
         });
 }
 
+export function getLastMsg(message) {
+    let icon = message?.text;
+    if(message?.audioPath || message?.wav) icon = "audio file"
+    if(message?.imagePath || message?.image) icon = "image file"
+    if (message?.docPath || message?.doc) {
+        const ext = message?.docPath ?
+            message.docPath.substring(message.docPath.lastIndexOf('.') + 1)
+            : message.doc.fileName.substring(message.doc.fileName.lastIndexOf('.') + 1); 
+        // let ic = fileTypeObj?.[ext] || "akar-icons:file";
+        // const colours = ['text-danger', 'text-warning', 'text-primary', 'text-secondary']
+        // let col = colours[Math.floor(Math.random()*colours.length)];
+        icon = `${ext} file`
+    }
+    return icon;
+}
+
 export const addMessage = (myPhoneNumber, message, key) => {
     const messageKey = myPhoneNumber + "_messages";
+    const icon = getLastMsg(message);
     if (key) {
         const sender = message.sender;
         const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
         const fn = allMsgs.find(c => c.key === key);
+        const text = message?.text ?? "";
         if (fn) {
             fn.messages.push(message);
-            fn.last_msg = message?.text || 'image';
+            fn.last_msg = getLastMsg(message)
             sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
             return;
         }
         
-        const arr = { key: sender, last_msg:message?.text || 'image', messages: [{...message}], name: "", photo: "" };
+        const arr = { key: sender, last_msg:text + icon, messages: [{...message}], name: "", photo: "" };
         allMsgs.push(arr);
         sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
     }
@@ -140,7 +158,7 @@ export const setConversationToStorage = (myPhoneNumber, toPhone, messages) => {
         const allMsgs = JSON.parse(sessionStorage.getItem(messageKey));
         const fn = allMsgs.find(c => c.key === toPhone);
         fn.messages = messages; 
-        fn.last_msg = messages[messages.length - 1]?.text || "image";
+        fn.last_msg = getLastMsg(messages[messages.length - 1]);
         sessionStorage.setItem(messageKey, JSON.stringify(allMsgs));
 }
 
@@ -186,5 +204,5 @@ export const fileTypeObj = {
         doc: "bxs:file-doc",
         docx: "bi:filetype-docx",
         csv: "bi:filetype-csv",
-        audio: "dashicons:media-audio",
+        wav: "dashicons:media-audio",
 }

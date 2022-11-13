@@ -6,11 +6,13 @@ import Chat from "./chat";
 import ContactInfo from "./contact-info";
 import Contacts from "./contacts";
 import { StompSessionProvider, useSubscription, useStompClient } from "react-stomp-hooks";
-import { addMessage, getConversationFromStorage, setConversationToStorage, updateSentMessage } from "./utilities";
+import { addMessage, getConversationFromStorage, getLastMsg, setConversationToStorage, updateSentMessage } from "./utilities";
 import uuid from 'react-uuid';
+import UpdateModal from "./update-modal";
 
 const ChatPage = ({ url, auth } ) => {
     const [currentChat, setCurrentChat] = useState({});
+    const [updateInfo, setUpdateInfo] = useState({ show: false, info: {} })
     const [timer, setTimer] = useState();
     const [abortRef] = [useRef()];
     const [contacts, setContacts] = useState([]);
@@ -45,10 +47,9 @@ const ChatPage = ({ url, auth } ) => {
     }
 
     const publishMessage = (msg, id) => {
-        console.log(msg);
         try {
             stompClient.publish({
-                destination: `/app/chat/${id}`, body: JSON.stringify(msg)
+                destination: `/app/chat/${id}`, body: JSON.stringify({...msg, wav: "", image: "", doc: ""})
             });
             addMessage(auth.phoneNumber, {...msg, id}, currentChat.phoneNumber);
             let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
@@ -80,7 +81,7 @@ const ChatPage = ({ url, auth } ) => {
         allContacts.forEach(c => {
             list.push({
                 key: c.key,
-                last_msg: c?.last_msg || 'image',
+                last_msg: c?.last_msg,
                 name: c?.name || c.key,
                 unread: 0,
                 phoneNumber: c.key,
@@ -107,15 +108,27 @@ const ChatPage = ({ url, auth } ) => {
         setContacts(list);
     }
     useLayoutEffect(() => {
+        abortRef.current = new AbortController();
         if (!auth?.access_token || !auth?.phoneNumber) navigate("/login");
         let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
         listContacts(allContacts);
+        //get user details
+        axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}/${auth.phoneNumber}`,
+            { signal: abortRef?.current.signal })
+            .then(res => {
+                setUpdateInfo(s => ({...s, info: {...res.data}}))
+            })
+            .catch(() => console.log("could not fetch user info"));
+            
+        return () => {
+            clearInterval(timer);
+            abortRef.current.abort();
+        }
     }, [])
 
     const [receiveDest, sentDest] = [`/topic/messages/${auth.phoneNumber}`, `/topic/sent/${auth.phoneNumber}`]
     useSubscription([sentDest, receiveDest], (msg) => {
         const obj = JSON.parse(msg.body);
-        const [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
         const destination = msg.headers.destination;
         if (destination === sentDest) {
             updateSentMessage(auth.phoneNumber, obj);
@@ -134,6 +147,7 @@ const ChatPage = ({ url, auth } ) => {
             return;
         }
         addMessage(auth.phoneNumber, obj, obj.sender);
+        const [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
         if (obj.sender === currentChat.phoneNumber) {
             setMessages(s => ([...s, obj]))
         }
@@ -141,7 +155,6 @@ const ChatPage = ({ url, auth } ) => {
     });
 
     useEffect(() => {
-        abortRef.current = new AbortController();
         if (currentChat.phoneNumber) {
             clearInterval(timer);
             const time = setInterval(() => {
@@ -153,10 +166,6 @@ const ChatPage = ({ url, auth } ) => {
                     .catch(() => console.log("could not fetch user status"));
             }, 5000);
             setTimer(time);
-        }
-        return () => {
-            clearInterval(timer);
-            abortRef.current.abort();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentChat.phoneNumber]);
@@ -172,13 +181,14 @@ const ChatPage = ({ url, auth } ) => {
                 console.log(res.data);
                 let lastMsg = "";
                 res.data.forEach(msg => {
-                    let index = oldMessages.findIndex(e => e.id === msg.id)
+                    let index = oldMessages.findIndex(e => e.id === msg.id);
                     if (index > -1) {
                         oldMessages[index] = msg;
                         return;
                     }
                     oldMessages.push(msg);
-                    lastMsg = msg?.text || 'image';
+                    console.log(getLastMsg(msg))
+                    lastMsg = getLastMsg(msg)
                 });
                 setConversationToStorage(auth.phoneNumber, currentChat.phoneNumber, oldMessages);
                 setMessages(oldMessages);
@@ -194,26 +204,26 @@ const ChatPage = ({ url, auth } ) => {
             })
         
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[abortRef, auth.phoneNumber, currentChat.phoneNumber, url])
+    },[auth.phoneNumber, currentChat.phoneNumber])
 
-    // get messages here
     
     if (!auth?.access_token || !auth?.phoneNumber) return <Navigate to="/login" />;
     return ( 
         <div className="chat-page-container">
-                <Row className="justify-content-center chat-row">
-                    <Col sm="3" className="border chat-col px-0">
-                        <Contacts setCurrentChat={setCurrentChat} contacts={contacts}
-                            setContacts={setContacts} auth={auth} searchContact={searchContact} />
-                    </Col>
-                    <Col sm="6" className="border chat-col">
-                        <Chat auth={auth} contact={currentChat} messages={messages}
-                            setMessages={setMessages} connectionStatus={connectionStatus} sendMessage={sendMessage} />
-                    </Col>
-                    <Col sm="3" className="border chat-col px-0">
-                        <ContactInfo currentChat={currentChat} />
-                    </Col>
-                </Row>
+            <Row className="justify-content-center chat-row">
+                <Col sm="3" className="border chat-col px-0">
+                    <Contacts setCurrentChat={setCurrentChat} currentChat={currentChat} contacts={contacts}
+                        setContacts={setContacts} auth={auth} searchContact={searchContact} setUpdateInfo={setUpdateInfo} />
+                </Col>
+                <Col sm="6" className="border chat-col">
+                    <Chat auth={auth} contact={currentChat} messages={messages}
+                        setMessages={setMessages} connectionStatus={connectionStatus} sendMessage={sendMessage} />
+                </Col>
+                <Col sm="3" className="border chat-col px-0">
+                    <ContactInfo currentChat={currentChat} messages={messages} status={connectionStatus} />
+                </Col>
+            </Row>
+            <UpdateModal obj={updateInfo} setShow={setUpdateInfo} phoneNumber={auth.phoneNumber} />
         </div>
      );
 }

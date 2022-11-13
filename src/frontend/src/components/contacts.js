@@ -6,7 +6,7 @@ import profileIMage from "../images/female-av.png";
 import { useState } from "react";
 import AddContactModal from "./add-contact-modal";
 
-const Contacts = ({setCurrentChat, contacts, setContacts, auth, searchContact }) => {
+const Contacts = ({ setCurrentChat, contacts, setContacts, auth, searchContact, currentChat, setUpdateInfo }) => {
     const [newContactModal, setNewContactModal] = useState({ show: false });
     const handleSearch = e => {
         const text = e.target.value;
@@ -38,7 +38,8 @@ const Contacts = ({setCurrentChat, contacts, setContacts, auth, searchContact })
         <div className="py-3 contact-col">
             <Row className="justify-content-between py-2 mx-0">
                 <Col sm="3">
-                    <img width="35" height="35" className="rounded-pill border" src={profileIMage} alt="contact" />
+                    <img width="35" height="35" className="rounded-pill border" src={profileIMage}
+                        alt="contact" onClick={()=> setUpdateInfo(s=>({...s, show:true}))} />
                 </Col>
                 <Col sm="5">
                     <div className="fs-5 fw-bold text-left">Chats</div>
@@ -55,7 +56,7 @@ const Contacts = ({setCurrentChat, contacts, setContacts, auth, searchContact })
             <div className="con-div">
              {
                 contacts.length > 0 ?
-                        contacts.map((c, i) => <Contact key={c.phoneNumber} obj={c} setCurrentChat={setCurrentChat} />)
+                        contacts.map((c, i) => <Contact key={c.phoneNumber} obj={c} current={currentChat} setCurrentChat={setCurrentChat} />)
                         :
                         <small>No contacts found.</small>
              }

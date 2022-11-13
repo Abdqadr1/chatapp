@@ -9,6 +9,7 @@ import MessageModal from "./message_modal";
 import ImageModal from "./image-modal";
 import SendFileModal from "./sendfile";
 import AudioModal from "./audio-modal";
+import uuid from "react-uuid";
 const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) => {
     const { name, image, phoneNumber } = contact;
     const { access_token, phoneNumber: myPhoneNumber } = auth;
@@ -98,8 +99,8 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
     }
 
     const changeIcon = e => {
-        if (e.target.value !== "") setIsMessage(true);
-        if (e.target.value === "") setIsMessage(false);
+        if (e.target.value !== "" && !isMessage) setIsMessage(true);
+        if (e.target.value === "" && isMessage) setIsMessage(false);
     }
 
     const record = e => {
@@ -139,8 +140,9 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
             <div className="inside">
                  <div className="chat-div py-3" id={elId}>
                     {
+                       
                         messages.length > 0 ?
-                            messages.map(msg => <Message key={msg.id} userPhone={myPhoneNumber} {...msg} setViewImage={setViewImage} />) :
+                            messages.map((m, i) => <Message key={m.id} userPhone={myPhoneNumber} obj={m} setViewImage={setViewImage} />) :
                         <div className="text-center mt-4"><small>No message found. Start conversation</small></div>
                     }
                 </div>
@@ -177,7 +179,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
             <MessageModal obj={msgModal} setShow={setMsgModal} />
             <ImageModal obj={viewImage} setShow={setViewImage} />
             <SendFileModal obj={photoModal} setShow={setPhotoModal} sendMessage={sendMessage} />
-            <AudioModal obj={audioModal} setShow={setAudioModal} sendMessage={sendMessage} />
+            <AudioModal obj={audioModal} setShow={setAudioModal} sendMessage={send} myPhoneNumber={myPhoneNumber} phoneNumber={phoneNumber} />
         </div>
      );
 }

@@ -14,6 +14,7 @@ public class UserDTO {
     private String phoneNumber;
     private String name;
     private String photo;
+    private String bio;
     private LocalDateTime lastSeen;
 
     public UserDTO (User user){
@@ -21,6 +22,7 @@ public class UserDTO {
         name = user.getName();
         photo = user.getPhoto();
         lastSeen = user.getLastSeen();
+        bio = user.getBio();
     }
 
     public boolean getStatus(){

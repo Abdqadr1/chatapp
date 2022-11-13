@@ -22,7 +22,9 @@ public class User {
     @Indexed(unique = true)
     private String phoneNumber;
     private String name;
-    private String photo="";
+    private String photo;
+
+    private String bio;
     private LocalDateTime lastSeen;
 
     private String password;

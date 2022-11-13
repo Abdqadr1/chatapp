@@ -2,8 +2,9 @@ import { Icon } from "@iconify/react";
 import { Col, Row } from "react-bootstrap";
 import { fileTypeObj } from "./utilities";
 
-const Message = ({ text, image, imagePath, id, time, sender, setViewImage,
-    userPhone, status, audioPath, wav, doc, docPath, document:  docment}) => {
+const Message = ({userPhone, setViewImage, obj}) => {
+    let {  text, image, imagePath, id, time, sender,
+     status, audioPath, wav, doc, docPath, document: docment } = obj;
     const isSent = sender === userPhone;
     const dir = isSent ? "justify-content-end" : "justify-content-start";
     const timeDir = isSent ? "text-end" : "text-start";
@@ -42,9 +43,10 @@ const Message = ({ text, image, imagePath, id, time, sender, setViewImage,
         let ic = fileTypeObj?.[ext] || "akar-icons:file";
         const colours = ['text-danger', 'text-warning', 'text-primary', 'text-secondary']
         let col = colours[Math.floor(Math.random()*colours.length)];
-        docEl = <div className="my-1 w-100 d-flex justify-content-start align-items-center py-1" onClick={downloadDoc}>
+        docEl = <div className="my-1 w-100 d-flex justify-content-start align-items-center py-1 position-relative" onClick={downloadDoc}>
             <Icon icon={ic} className={col} />
             <small className={`ms-1 ${col}`}>document</small>
+            <div className={`image-progress progress${id}`}></div>
         </div>
     }
     
@@ -64,7 +66,7 @@ const Message = ({ text, image, imagePath, id, time, sender, setViewImage,
                             {text ? <div className={"text-start message-text"}>{text}</div> : ''}
                             {
                                 (audioPath || wav) ? 
-                                    <div className="position-relative mb-1">
+                                    <div className="position-relative mb-1 w-75 fs-6">
                                         <audio src={soundURL} controls></audio>
                                         <div className={`image-progress progress${id}`}></div>
                                     </div>
