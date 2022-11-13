@@ -44,4 +44,7 @@ public class MessageService {
         return messageRepo.getMessagesBetween(from, to);
     }
 
+    public List<Message> getUserMessages(String number) {
+
+    }
 }

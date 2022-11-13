@@ -58,4 +58,12 @@ public class UserService implements UserDetailsService {
         byPhoneNumber.setLastSeen(LocalDateTime.now());
         userRepository.save(byPhoneNumber);
     }
+
+    public void updateInfo(String bio, String number, String photo) {
+        User byPhoneNumber = getByPhoneNumber(number)
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number"));
+        byPhoneNumber.setBio(bio);
+        byPhoneNumber.setLastSeen(LocalDateTime.now());
+        byPhoneNumber.setPhoto(photo.isEmpty() ? byPhoneNumber.getPhoto() :  photo);
+    }
 }

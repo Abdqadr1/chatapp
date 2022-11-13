@@ -6,7 +6,7 @@ import profileIMage from "../images/female-av.png";
 import { useState } from "react";
 import AddContactModal from "./add-contact-modal";
 
-const Contacts = ({ setCurrentChat, contacts, setContacts, auth, searchContact, currentChat, setUpdateInfo }) => {
+const Contacts = ({ setCurrentChat, contacts, setContacts, auth, searchContact, currentChat, setUpdateInfo, info }) => {
     const [newContactModal, setNewContactModal] = useState({ show: false });
     const handleSearch = e => {
         const text = e.target.value;
@@ -29,16 +29,12 @@ const Contacts = ({ setCurrentChat, contacts, setContacts, auth, searchContact, 
         }
     }
 
-    // useEffect(() => {
-    //     setCurrentChat(contacts[0]);
-    // }, [])
-
 
     return (
         <div className="py-3 contact-col">
             <Row className="justify-content-between py-2 mx-0">
                 <Col sm="3">
-                    <img width="35" height="35" className="rounded-pill border" src={profileIMage}
+                    <img width="35" height="35" className="rounded-pill border" src={info?.imagePath|| profileIMage}
                         alt="contact" onClick={()=> setUpdateInfo(s=>({...s, show:true}))} />
                 </Col>
                 <Col sm="5">

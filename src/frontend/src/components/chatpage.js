@@ -208,22 +208,26 @@ const ChatPage = ({ url, auth } ) => {
 
     
     if (!auth?.access_token || !auth?.phoneNumber) return <Navigate to="/login" />;
+    const style = currentChat?.phoneNumber ? "" : "no-chat";
     return ( 
         <div className="chat-page-container">
             <Row className="justify-content-center chat-row">
                 <Col sm="3" className="border chat-col px-0">
                     <Contacts setCurrentChat={setCurrentChat} currentChat={currentChat} contacts={contacts}
-                        setContacts={setContacts} auth={auth} searchContact={searchContact} setUpdateInfo={setUpdateInfo} />
+                        setContacts={setContacts} auth={auth} searchContact={searchContact} info={updateInfo.info}
+                        setUpdateInfo={setUpdateInfo} />
                 </Col>
-                <Col sm="6" className="border chat-col">
+                <Col sm="6" className={`border chat-col ${style}`}>
                     <Chat auth={auth} contact={currentChat} messages={messages}
                         setMessages={setMessages} connectionStatus={connectionStatus} sendMessage={sendMessage} />
+                    <div className="cloud">select a chat.</div>
                 </Col>
-                <Col sm="3" className="border chat-col px-0">
+                <Col sm="3" className={`border px-0 chat-col ${style}`}>
                     <ContactInfo currentChat={currentChat} messages={messages} status={connectionStatus} />
+                    <div className="cloud">select a chat.</div>
                 </Col>
             </Row>
-            <UpdateModal obj={updateInfo} setShow={setUpdateInfo} phoneNumber={auth.phoneNumber} />
+            <UpdateModal obj={updateInfo} setShow={setUpdateInfo} auth={auth} />
         </div>
      );
 }
@@ -237,7 +241,13 @@ const StompWrapper = ()  => {
     useLayoutEffect(() => {
         const abortController = new AbortController();
         // TODO: get all messages
-
+         axios.get(`${serverUrl}/get-user-messages/${auth.phoneNumber}`,
+            { signal: abortController.signal })
+             .then(res => {
+                console.log(res.data)
+            })
+            .catch(() => console.log("could not fetch user messages"));
+        
         return () => abortController.abort();
 
     }, []);

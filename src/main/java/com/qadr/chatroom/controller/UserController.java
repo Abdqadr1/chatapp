@@ -3,12 +3,16 @@ package com.qadr.chatroom.controller;
 import com.qadr.chatroom.model.Message;
 import com.qadr.chatroom.model.User;
 import com.qadr.chatroom.model.UserDTO;
+import com.qadr.chatroom.s3.AmazonS3Util;
+import com.qadr.chatroom.s3.Constants;
 import com.qadr.chatroom.service.MessageService;
 import com.qadr.chatroom.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,6 +20,7 @@ public class UserController {
     @Autowired private UserService userService;
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private MessageService messageService;
+    @Autowired private AmazonS3Util amazonS3Util;
 
     @PostMapping("/api/register")
     public void signUp(User user){
@@ -40,10 +45,30 @@ public class UserController {
         return messageService.getChatBetween(from, to);
     }
 
+    @GetMapping("/api/get-user-messages/{number}")
+    public List<Message> getChat(@PathVariable("from") String number){
+        return messageService.getUserMessages(number);
+    }
+
     @PutMapping("/api/update-status/{number}")
     public void updateStatus(@PathVariable String number){
         userService.updateStatus(number);
     }
 
+    @PutMapping("/api/update-info/{number}")
+    public String updateUserInfo(@RequestParam("bio") String bio,
+                                 @PathVariable String number,
+                                 @RequestParam("image")MultipartFile file) throws IOException {
+
+        String photo = "";
+        if (file != null && !file.isEmpty()) {
+            String folder = Constants.USER_IMAGE_FOLDER_NAME + "/" + number;
+            String fileName = file.getOriginalFilename();
+            amazonS3Util.removeFolder(folder);
+            amazonS3Util.uploadFile(folder, fileName, file.getInputStream());
+        }
+        userService.updateInfo(bio, number, photo);
+        return photo;
+    }
 
 }

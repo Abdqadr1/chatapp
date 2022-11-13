@@ -46,6 +46,7 @@ public class AmazonS3Util {
     }
 
     public void uploadFile(String folderName, String fileName, InputStream inputStream){
+        System.out.println(accessKey + " " + secretKey);
         S3Client s3Client = S3Client.builder()
                 .credentialsProvider(new S3CredentialsProvider(accessKey, secretKey))
                 .region(Region.of(BUCKET_REGION)).build();
@@ -64,7 +65,7 @@ public class AmazonS3Util {
 
     public void deleteFile(String key){
         S3Client s3Client = S3Client.builder()
-                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+                .credentialsProvider(new S3CredentialsProvider(accessKey, secretKey))
                 .region(Region.of(BUCKET_REGION)).build();
         DeleteObjectRequest deleteObjectRequest =
                 DeleteObjectRequest.builder().bucket(BUCKET_NAME)

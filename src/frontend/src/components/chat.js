@@ -176,6 +176,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                             onClick={record} />
                 }
             </div>
+            
             <MessageModal obj={msgModal} setShow={setMsgModal} />
             <ImageModal obj={viewImage} setShow={setViewImage} />
             <SendFileModal obj={photoModal} setShow={setPhotoModal} sendMessage={sendMessage} />
