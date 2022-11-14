@@ -9,9 +9,8 @@ import MessageModal from "./message_modal";
 import ImageModal from "./image-modal";
 import SendFileModal from "./sendfile";
 import AudioModal from "./audio-modal";
-import uuid from "react-uuid";
 const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) => {
-    const { name, image, phoneNumber } = contact;
+    const { name, imagePath, phoneNumber } = contact;
     const { access_token, phoneNumber: myPhoneNumber } = auth;
     const [viewImage, setViewImage] = useState({ show: false, image: '' });
     const [msgModal, setMsgModal] = useState({ show: false, title: "File error", message: "File type not supported." });
@@ -115,7 +114,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
             <Row className="chat-header justify-content-between border-bottom py-3">
                 <Col md={8}>
                     <div className="d-flex justify-content-start">
-                        <img width="35" height="35" className="rounded-pill border" src={image || headerImage} alt="contact" />
+                        <img width="35" height="35" className="rounded-pill border" src={imagePath || headerImage} alt="contact" />
                         <div className="ms-2">
                             <div className="chat-name">{getShortName(name, 40)}</div>
                             <div className="last-msg">{ connectionStatus ? "Active Now" : "Offline"}</div>

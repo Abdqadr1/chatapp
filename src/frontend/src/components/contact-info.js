@@ -1,6 +1,6 @@
 
 import { Icon } from "@iconify/react";
-import { Accordion, Col, Row } from "react-bootstrap";
+import { Accordion, Col, FloatingLabel, Form, Row } from "react-bootstrap";
 import headerImage from "../images/male-av.png";
 import "../styles/info.css";
 import { downloadFile, fileTypeObj, getShortName } from "./utilities";
@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import ImageModal from "./image-modal";
 import { Link } from "react-router-dom";
 const ContactInfo = ({ messages, status, currentChat }) => {
-    const { name, image } = currentChat;
+    const { name, imagePath, bio } = currentChat;
     const [images, setImages] = useState([])
     const [files, setFiles] = useState([]);
     const [viewImage, setViewImage] = useState({ show: false, image: '' });
@@ -43,14 +43,17 @@ const ContactInfo = ({ messages, status, currentChat }) => {
     
 
     return ( 
-        <div className="">
+        <div className="contact-info">
             <div className="my-2 text-end pe-3">
                 <small><Link className="text-decoration-none text-danger " to={"/logout"}>Logout</Link></small>
             </div>
             <div className="p-3 border-bottom">
-                <img src={image || headerImage} alt="contact" className="info-image" onClick={handleClick} />
+                <img src={imagePath || headerImage} alt="contact" className="info-image" onClick={handleClick} />
                 <div className="contact-name">{name}</div>
-                <div className="contact-status">{ status ? "Active Now" : "Offline Now" }</div> 
+                <div className="contact-status">{status ? "Active Now" : "Offline Now"}</div> 
+                <FloatingLabel controlId="floatingPassword" label="Bio" className="my-2">
+                    <Form.Control defaultValue={bio ?? ""} maxLength={100} disabled />
+                </FloatingLabel>
             </div>
             <div className="p-3 media-div">
                 <Accordion defaultActiveKey="0">
@@ -73,9 +76,6 @@ const ContactInfo = ({ messages, status, currentChat }) => {
                         </Accordion.Body>
                     </Accordion.Item>
                     </Accordion>
-            </div>
-            <div className="block-div">
-                
             </div>
             <ImageModal obj={viewImage} setShow={setViewImage} />
         </div>

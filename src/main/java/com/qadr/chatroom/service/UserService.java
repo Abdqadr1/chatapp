@@ -5,6 +5,7 @@ import com.qadr.chatroom.model.MyUserDetails;
 import com.qadr.chatroom.model.User;
 import com.qadr.chatroom.model.UserDTO;
 import com.qadr.chatroom.repo.UserRepository;
+import com.qadr.chatroom.s3.S3Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,15 +14,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.qadr.chatroom.s3.S3Properties.USER_IMAGE_FOLDER_NAME;
+
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired private UserRepository userRepository;
+    @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired private S3Properties s3Properties;
 
 
     public User registerUser(User user){
@@ -42,7 +46,7 @@ public class UserService implements UserDetailsService {
         User byPhoneNumber = getByPhoneNumber(number)
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user"));
 
-        return new UserDTO(byPhoneNumber);
+        return new UserDTO(byPhoneNumber,s3Properties);
     }
 
     @Override
@@ -60,10 +64,12 @@ public class UserService implements UserDetailsService {
     }
 
     public void updateInfo(String bio, String number, String photo) {
-        User byPhoneNumber = getByPhoneNumber(number)
+        User byPhone = getByPhoneNumber(number)
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number"));
-        byPhoneNumber.setBio(bio);
-        byPhoneNumber.setLastSeen(LocalDateTime.now());
-        byPhoneNumber.setPhoto(photo.isEmpty() ? byPhoneNumber.getPhoto() :  photo);
+        byPhone.setBio(bio.isEmpty() ? byPhone.getBio() : bio);
+        byPhone.setLastSeen(LocalDateTime.now());
+        byPhone.setPhoto(photo.isEmpty() ? byPhone.getPhoto() :  photo);
+        userRepository.save(byPhone);
     }
+
 }

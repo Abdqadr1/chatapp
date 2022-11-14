@@ -46,7 +46,6 @@ public class AmazonS3Util {
     }
 
     public void uploadFile(String folderName, String fileName, InputStream inputStream){
-        System.out.println(accessKey + " " + secretKey);
         S3Client s3Client = S3Client.builder()
                 .credentialsProvider(new S3CredentialsProvider(accessKey, secretKey))
                 .region(Region.of(BUCKET_REGION)).build();

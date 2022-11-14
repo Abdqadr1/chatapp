@@ -1,26 +1,15 @@
 package com.qadr.chatroom.service;
 
 import com.qadr.chatroom.model.Message;
-import com.qadr.chatroom.model.MessageStatus;
 import com.qadr.chatroom.model.SocketMessage;
 import com.qadr.chatroom.repo.MessageRepo;
-import com.qadr.chatroom.repo.UserRepository;
 import com.qadr.chatroom.s3.S3Properties;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import static com.qadr.chatroom.s3.S3Properties.CHAT_FOLDER_NAME;
 
 @Service
 public class MessageService {
@@ -45,6 +34,6 @@ public class MessageService {
     }
 
     public List<Message> getUserMessages(String number) {
-
+        return messageRepo.getAllMessages(number);
     }
 }

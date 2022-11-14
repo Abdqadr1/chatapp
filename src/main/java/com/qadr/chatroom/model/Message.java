@@ -47,7 +47,7 @@ public class Message {
     public String getDocPath (){
         return document == null || document.isEmpty() ? "" : Constants.S3_BASE_URI +
                 CHAT_FOLDER_NAME + "/" +
-                URLEncoder.encode(sender, StandardCharsets.UTF_8) + "/" + document;
+                URLEncoder.encode(sender + "/" + document, StandardCharsets.UTF_8);
     }
 
     public String getTime(){

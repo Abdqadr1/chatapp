@@ -7,7 +7,7 @@ import headerImage from "../images/male-av.png";
 import { isFileValid, listFormData, showThumbnail, SPINNERS_BORDER_HTML } from "./utilities";
 
 const UpdateModal = ({ obj, setShow, auth }) => {
-    const { bio, imagePath, photo } = obj.info;
+    const { bio, imagePath } = obj.info;
     const [alert, setAlert] = useState({ show: false, message: "", variant: "danger" });
     const toggleAlert = () => setAlert({ ...alert, show: !alert.show });
     const imageAcceptArray = ["image/png", "image/jpg", "image/jpeg"];
@@ -19,7 +19,7 @@ const UpdateModal = ({ obj, setShow, auth }) => {
     useEffect(() => {
         abortRef.current = new AbortController();
         return () => abortRef.current.abort();
-    }, [])
+    }, [abortRef])
 
     const handleSelectImage = (event) => {
         if (!auth?.phoneNumber) {
@@ -57,7 +57,7 @@ const UpdateModal = ({ obj, setShow, auth }) => {
                 if (res.data) {
                     setShow(s => ({
                         ...s, 
-                        info: {...s.info, imagePath: res.data }
+                        info: {...s.info, imagePath: res.data, bio: data.get(bio) }
                     }))
                 }
                 

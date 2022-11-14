@@ -6,7 +6,7 @@ import Chat from "./chat";
 import ContactInfo from "./contact-info";
 import Contacts from "./contacts";
 import { StompSessionProvider, useSubscription, useStompClient } from "react-stomp-hooks";
-import { addMessage, getConversationFromStorage, getLastMsg, setConversationToStorage, updateSentMessage } from "./utilities";
+import { addMessage, getAllConversation, getConversationFromStorage, getLastMsg, setConversationToStorage, SPINNERS_BORDER, updateSentMessage } from "./utilities";
 import uuid from 'react-uuid';
 import UpdateModal from "./update-modal";
 
@@ -80,12 +80,13 @@ const ChatPage = ({ url, auth } ) => {
         const list = [];
         allContacts.forEach(c => {
             list.push({
+                bio: c?.bio || "",
                 key: c.key,
                 last_msg: c?.last_msg,
                 name: c?.name || c.key,
                 unread: 0,
                 phoneNumber: c.key,
-                image: ""
+                imagePath: c?.imagePath || "",
             })
         })
         setContacts(list);
@@ -101,8 +102,9 @@ const ChatPage = ({ url, auth } ) => {
                 last_msg: c?.last_msg || 'image',
                 name: c?.name || c.key,
                 unread: 0,
+                bio: c?.bio || "",
                 phoneNumber: c.key,
-                image: ""
+                imagePath: c?.imagePath || ""
             })
         })
         setContacts(list);
@@ -112,10 +114,10 @@ const ChatPage = ({ url, auth } ) => {
         if (!auth?.access_token || !auth?.phoneNumber) navigate("/login");
         let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
         listContacts(allContacts);
-        //get user details
         axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}/${auth.phoneNumber}`,
             { signal: abortRef?.current.signal })
             .then(res => {
+                console.log(res.data)
                 setUpdateInfo(s => ({...s, info: {...res.data}}))
             })
             .catch(() => console.log("could not fetch user info"));
@@ -124,6 +126,7 @@ const ChatPage = ({ url, auth } ) => {
             clearInterval(timer);
             abortRef.current.abort();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const [receiveDest, sentDest] = [`/topic/messages/${auth.phoneNumber}`, `/topic/sent/${auth.phoneNumber}`]
@@ -155,28 +158,32 @@ const ChatPage = ({ url, auth } ) => {
     });
 
     useEffect(() => {
+        const abortController = new AbortController();
         if (currentChat.phoneNumber) {
-            clearInterval(timer);
             const time = setInterval(() => {
                 axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}/${currentChat.phoneNumber}`,
-                    { signal: abortRef?.current.signal })
+                    { signal: abortController.signal })
                     .then(res => {
                         setConnectionStatus(res.data?.status);
                     })
                     .catch(() => console.log("could not fetch user status"));
             }, 5000);
-            setTimer(time);
+            setTimer(s => {
+                clearInterval(s);
+                return time;
+            });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentChat.phoneNumber]);
+        return () => abortController.abort();
+    }, [auth.phoneNumber, currentChat.phoneNumber, url]);
 
 
 
     useEffect(() => {
         console.log("fetching conversation...");
         if (!auth?.phoneNumber || !currentChat?.phoneNumber) return;
+        const abortController = new AbortController();
         let [, oldMessages] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
-        axios.get(`${url}/api/get-messages/${auth.phoneNumber}/${currentChat.phoneNumber}`, { signal: abortRef?.current.signal })
+        axios.get(`${url}/api/get-messages/${auth.phoneNumber}/${currentChat.phoneNumber}`, { signal: abortController.signal })
             .then(res => {
                 console.log(res.data);
                 let lastMsg = "";
@@ -192,19 +199,20 @@ const ChatPage = ({ url, auth } ) => {
                 });
                 setConversationToStorage(auth.phoneNumber, currentChat.phoneNumber, oldMessages);
                 setMessages(oldMessages);
-                let find = contacts.find(c => c.phoneNumber === currentChat.phoneNumber);
-                if (find && lastMsg) {
-                    find.last_msg = lastMsg;
-                    setContacts(s => ([...s]));
-                }
+                setContacts(s => {
+                    let find = s.find(c => c.phoneNumber === currentChat.phoneNumber);
+                    if (find && lastMsg) {
+                        find.last_msg = lastMsg;
+                    }
+                    return [...s];
+                });
             })
             .catch(() => {
                 setMessages(oldMessages);
                 console.log("could not fetch conversation")
             })
-        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[auth.phoneNumber, currentChat.phoneNumber])
+        return () => abortController.abort();
+    },[auth.name, auth.phoneNumber, currentChat.phoneNumber, url])
 
     
     if (!auth?.access_token || !auth?.phoneNumber) return <Navigate to="/login" />;
@@ -236,28 +244,54 @@ const StompWrapper = ()  => {
     const auth = JSON.parse(sessionStorage.getItem("auth") || "{}");
     const socketUrl = process.env.REACT_APP_SOCKET_URL;
     const serverUrl = process.env.REACT_APP_SERVER_URL;
-
+    const [isReady, setReady] = useState(false);
 
     useLayoutEffect(() => {
         const abortController = new AbortController();
-        // TODO: get all messages
-         axios.get(`${serverUrl}/get-user-messages/${auth.phoneNumber}`,
+        if (!auth.phoneNumber) return;
+        const allMsgs = getAllConversation(auth.phoneNumber);
+        axios.get(`${serverUrl}/get-user-messages/${auth.phoneNumber}`,
             { signal: abortController.signal })
-             .then(res => {
-                console.log(res.data)
+            .then(res => {
+                console.log(res.data);
+                res.data.forEach(msg => {
+                    let key = msg.receiver === auth.phoneNumber ? msg.sender : msg.receiver;
+                    const fn = allMsgs.find(c => c.key === key);
+                    const lastMsg = getLastMsg(msg)
+                    if (fn) {
+                        const idx = fn.messages.findIndex(m => m.id === msg.id);
+                        if (idx > -1) {
+                            fn.messages[idx] = { ...msg };
+                            return;
+                        }
+                        fn.messages.push({ ...msg });
+                        fn.last_msg = lastMsg
+                        return;
+                    }
+                    const arr = { key, last_msg: lastMsg, messages: [{ ...msg }], name: "", photo: "" };
+                    allMsgs.push(arr);
+                });
+                sessionStorage.setItem(auth.phoneNumber + "_messages", JSON.stringify(allMsgs));
             })
-            .catch(() => console.log("could not fetch user messages"));
+            .catch(() => console.log("could not fetch user messages"))
+            .finally(() => setReady(true));
         
         return () => abortController.abort();
 
-    }, []);
+    }, [auth.phoneNumber, serverUrl]);
 
-    return (
-        <StompSessionProvider url={socketUrl + "/ws"} connectHeaders={{ "Authorization": "Bearer ..." }} connectionTimeout={5000}
-            debug={(str) => { console.log(str)}}
-            >
-                <ChatPage url={socketUrl} auth={auth} />
-        </StompSessionProvider>
+    return ( 
+        <>
+            {
+                (isReady) ?
+                <StompSessionProvider url={socketUrl + "/ws"} connectHeaders={{ "Authorization": "Bearer ..." }} connectionTimeout={5000}
+                    debug={(str) => { console.log(str)}}
+                    >
+                        <ChatPage url={socketUrl} auth={auth} />
+                </StompSessionProvider>
+                : <div className="stomp-loader">{SPINNERS_BORDER}</div>
+            }
+        </>
     )
 }
  

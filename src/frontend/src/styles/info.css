@@ -66,12 +66,26 @@
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
-    max-height: 200px;
+    max-height: 150px;
     overflow-y: auto;
     scroll-behavior: smooth;
-        -ms-overflow-style: none;
-        /* IE and Edge */
-        scrollbar-width: none;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+}
+.ac-body::-webkit-scrollbar {
+    display: none;
+}
+.contact-info{
+    overflow-y: auto;
+    height: 100%;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+}
+.contact-info::-webkit-scrollbar{
+    display: none;
 }
 
 .accordion-button:not(.collapsed)::after {
@@ -106,7 +120,4 @@
 }
 .media-div{
     max-height: calc(100% - 280px);
-}
-.block-div{
-    height: 30px;
 }

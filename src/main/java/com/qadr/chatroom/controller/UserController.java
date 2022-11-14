@@ -5,6 +5,7 @@ import com.qadr.chatroom.model.User;
 import com.qadr.chatroom.model.UserDTO;
 import com.qadr.chatroom.s3.AmazonS3Util;
 import com.qadr.chatroom.s3.Constants;
+import com.qadr.chatroom.s3.S3Properties;
 import com.qadr.chatroom.service.MessageService;
 import com.qadr.chatroom.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import static com.qadr.chatroom.s3.S3Properties.USER_IMAGE_FOLDER_NAME;
 
 @RestController
 public class UserController {
@@ -21,6 +26,7 @@ public class UserController {
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private MessageService messageService;
     @Autowired private AmazonS3Util amazonS3Util;
+    @Autowired private S3Properties s3Properties;
 
     @PostMapping("/api/register")
     public void signUp(User user){
@@ -46,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping("/api/get-user-messages/{number}")
-    public List<Message> getChat(@PathVariable("from") String number){
+    public List<Message> getChat(@PathVariable String number){
         return messageService.getUserMessages(number);
     }
 
@@ -55,20 +61,22 @@ public class UserController {
         userService.updateStatus(number);
     }
 
+
     @PutMapping("/api/update-info/{number}")
     public String updateUserInfo(@RequestParam("bio") String bio,
                                  @PathVariable String number,
                                  @RequestParam("image")MultipartFile file) throws IOException {
-
-        String photo = "";
         if (file != null && !file.isEmpty()) {
             String folder = Constants.USER_IMAGE_FOLDER_NAME + "/" + number;
             String fileName = file.getOriginalFilename();
             amazonS3Util.removeFolder(folder);
             amazonS3Util.uploadFile(folder, fileName, file.getInputStream());
+            String photo = s3Properties.getURI() + URLEncoder.encode(folder + "/" + fileName, StandardCharsets.UTF_8);
+            userService.updateInfo(bio, number, fileName);
+            return photo;
         }
-        userService.updateInfo(bio, number, photo);
-        return photo;
+        userService.updateInfo(bio, number, "");
+        return "";
     }
 
 }

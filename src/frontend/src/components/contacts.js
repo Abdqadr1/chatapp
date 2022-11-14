@@ -52,7 +52,8 @@ const Contacts = ({ setCurrentChat, contacts, setContacts, auth, searchContact, 
             <div className="con-div">
              {
                 contacts.length > 0 ?
-                        contacts.map((c, i) => <Contact key={c.phoneNumber} obj={c} current={currentChat} setCurrentChat={setCurrentChat} />)
+                        contacts.map(c => <Contact key={c.phoneNumber} obj={c} current={currentChat}
+                            setCurrentChat={setCurrentChat} auth={auth} setContacts={setContacts} />)
                         :
                         <small>No contacts found.</small>
              }
