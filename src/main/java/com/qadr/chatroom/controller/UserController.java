@@ -27,6 +27,7 @@ public class UserController {
     @Autowired private MessageService messageService;
     @Autowired private AmazonS3Util amazonS3Util;
     @Autowired private S3Properties s3Properties;
+    @Autowired private AuthController authController;
 
     @PostMapping("/api/register")
     public void signUp(User user){
@@ -38,34 +39,37 @@ public class UserController {
         return userService.search(number);
     }
 
-    @GetMapping("/api/get-contact-status/{current}/{number}")
-    public UserDTO getContactStatus(@PathVariable("number") String number,
-                                    @PathVariable("current") String current){
+    @GetMapping("/api/get-contact-status/{number}")
+    public UserDTO getContactStatus(@PathVariable("number") String number){
+        String current = authController.getAuthNumber();
         userService.updateStatus(current);
         return userService.search(number);
     }
 
 
-    @GetMapping("/api/get-messages/{from}/{to}")
-    public List<Message> getChat(@PathVariable("from") String from, @PathVariable("to") String to){
-        return messageService.getChatBetween(from, to);
+    @GetMapping("/api/get-messages/{two}")
+    public List<Message> getChatBetween(@PathVariable("two") String two){
+        String one = authController.getAuthNumber();
+        return messageService.getChatBetween(one, two);
     }
 
-    @GetMapping("/api/get-user-messages/{number}")
-    public List<Message> getChat(@PathVariable String number){
+    @GetMapping("/api/get-user-messages")
+    public List<Message> getChat(){
+        String number = authController.getAuthNumber();
         return messageService.getUserMessages(number);
     }
 
-    @PutMapping("/api/update-status/{number}")
-    public void updateStatus(@PathVariable String number){
+    @PutMapping("/api/update-status")
+    public void updateStatus(){
+        String number = authController.getAuthNumber();
         userService.updateStatus(number);
     }
 
 
-    @PutMapping("/api/update-info/{number}")
+    @PutMapping("/api/update-info")
     public String updateUserInfo(@RequestParam("bio") String bio,
-                                 @PathVariable String number,
                                  @RequestParam("image")MultipartFile file) throws IOException {
+        String number = authController.getAuthNumber();
         if (file != null && !file.isEmpty()) {
             String folder = Constants.USER_IMAGE_FOLDER_NAME + "/" + number;
             String fileName = file.getOriginalFilename();

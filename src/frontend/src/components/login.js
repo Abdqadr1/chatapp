@@ -1,6 +1,6 @@
 import { Alert, Button, Form } from "react-bootstrap";
 import { listFormData, SPINNERS_BORDER_HTML } from "./utilities";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 
@@ -11,6 +11,7 @@ const Login = () => {
     const toggleAlert = () => setAlert({ ...alert, show: !alert.show });
     const [abortRef, alertRef] = [useRef(), useRef()];
     const serverUrl = process.env.REACT_APP_SERVER_URL;
+    sessionStorage.setItem("auth", '');
     useEffect(() => {
         abortRef.current = new AbortController();
         return () => abortRef.current.abort();
@@ -50,6 +51,9 @@ const Login = () => {
 
                 <Form.Control  className="my-3" type="password" placeholder="password" name="password" required minLength={8} maxLength={100} />
                 <Button className="mt-2 w-100" type="submit" variant="success">Log In </Button>
+                <div className="d-flex justify-content-end mt-2">
+                    <Link className="text-decoration-none text-info fs-5" to={"/register"} >register</Link>
+                </div>
             </Form>
         </div>
      );

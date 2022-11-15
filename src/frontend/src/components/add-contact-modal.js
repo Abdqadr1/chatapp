@@ -1,13 +1,15 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { addContactToStorage, SPINNERS_BORDER_HTML } from "./utilities";
+import { useNavigate } from "react-router";
+import { addContactToStorage, isTokenExpired, SPINNERS_BORDER_HTML } from "./utilities";
 const AddContactModal = ({ obj, setShow, callback, auth }) => {
     const [inputRef, abortRef, selectRef, btnRef, alertRef] = [useRef(), useRef(), useRef(), useRef(), useRef()];
     const [countries, setCountries] = useState([]);
     const hideModal = () => setShow(s => ({ ...s, show: false }));
     const [alert, setAlert] = useState({ show: false, message: "", variant: "danger" });
     const url = process.env.REACT_APP_SERVER_URL;
+    const navigate = useNavigate();
 
     const toggleAlert = () => {
         setAlert({...alert, show: !alert.show})
@@ -15,7 +17,9 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
 
     useEffect(() => {
         abortRef.current = new AbortController();
-        axios.get('http://api-env.eba-irpspqyp.us-east-1.elasticbeanstalk.com/country/all')
+        axios.get('http://api-env.eba-irpspqyp.us-east-1.elasticbeanstalk.com/country/all',
+            { signal: abortRef.current.signal }
+        )
             .then(res => setCountries(res.data))
             .catch(() => setAlert({ show: true, message: "Could not fetch countries" }))
         return () => abortRef?.current.abort();
@@ -30,7 +34,13 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
         console.log("looking for " + code + number);
         const txt = btnRef.current.textContent;
         btnRef.current.innerHTML = SPINNERS_BORDER_HTML;
-        axios.get(`${url}/search-number/${number}`)
+        axios.get(`${url}/search-number/${number}`,
+            {
+                signal: abortRef.current?.signal,
+                headers: {
+                    Authorization: `Bearer ${auth.access_token}`
+                }
+            })
             .then(res => {
                 const { phoneNumber, name, photo } = res.data;
                 const c = {
@@ -46,6 +56,7 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
                 hideModal();
             })
             .catch(err => {
+                isTokenExpired(err, () => navigate("/login"))
                 setAlert({ show: true, message: "could not find contact" })
             })
             .finally(() => btnRef.current.textContent = txt);

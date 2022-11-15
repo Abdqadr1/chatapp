@@ -32,8 +32,10 @@ public class SecurityConfig {
             return configuration;
         });
 
-        http.authorizeRequests().anyRequest().permitAll()
-        .and()
+        http.authorizeRequests().antMatchers("/api/auth","/ws/**").permitAll();
+        http.authorizeRequests().anyRequest().authenticated();
+
+        http
                 .formLogin().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

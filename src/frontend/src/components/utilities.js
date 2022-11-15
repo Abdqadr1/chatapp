@@ -49,14 +49,14 @@ export const isAuthValid = (auth) => {
 }
 
 
-export const isTokenExpired = (response) => {
-    if(response === null || response === undefined) return false;
-    const message = response.data.message.toLowerCase()
-    if (Number(response.status) === 400
+export const isTokenExpired = (err, cb) => {
+    const res = err?.response;
+    if (res === null || res === undefined) return;
+    const message = res?.data?.message?.toLowerCase() || res?.data?.error?.toLowerCase();
+    console.log(message);
+    if (Number(res.status) === 406
         && message.indexOf("token") > -1
-        && message.indexOf("expired") > -1) return true
-    
-    return false
+        && message.indexOf("expired") > -1) cb();
 }
 
 export const getShortName = (name, len=60) => {

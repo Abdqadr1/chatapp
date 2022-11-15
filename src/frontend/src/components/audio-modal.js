@@ -49,6 +49,7 @@ const AudioModal = ({ sendMessage, obj, setShow, myPhoneNumber, phoneNumber }) =
                 .catch((err) => console.log("Needs microphone permission", err));
         }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [obj.show]);
 
     return ( 

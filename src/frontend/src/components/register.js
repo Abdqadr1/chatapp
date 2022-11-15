@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import { listFormData, SPINNERS_BORDER_HTML } from "./utilities";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Register = () => {
@@ -85,6 +85,9 @@ const Register = () => {
                 <Form.Control value={form?.password} onInput={handleInput} className="my-2" type="password" placeholder="Enter password" name="password" required minLength={8} maxLength={100} />
                 <Form.Control value={form?.confirm} onInput={handleInput} className="my-2" type="password" placeholder="Confirm password" name="confirm" required minLength={8} maxLength={100} />
                 <Button className="mt-2 w-100" type="submit" variant="success">Register</Button>
+                <div className="d-flex justify-content-end mt-2">
+                    <Link className="text-decoration-none text-info fs-5" to={"/login"} >Login</Link>
+                </div>
             </Form>
         </div>
     );

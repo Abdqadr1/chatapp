@@ -11,7 +11,7 @@ import SendFileModal from "./sendfile";
 import AudioModal from "./audio-modal";
 const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) => {
     const { name, imagePath, phoneNumber } = contact;
-    const { access_token, phoneNumber: myPhoneNumber } = auth;
+    const { phoneNumber: myPhoneNumber } = auth;
     const [viewImage, setViewImage] = useState({ show: false, image: '' });
     const [msgModal, setMsgModal] = useState({ show: false, title: "File error", message: "File type not supported." });
     const [photoModal, setPhotoModal] = useState({ show: false, image: '' });

@@ -60,7 +60,7 @@ const ContactInfo = ({ messages, status, currentChat }) => {
                     <Accordion.Item eventKey="0">
                         <Accordion.Header className="ac-header">Shared Images</Accordion.Header>
                         <Accordion.Body className="ac-body">
-                            <Row>
+                            <Row className="mx-0">
                                 {
                                     images.map((img, i) => <ImageElement key={i} image={img} setImages={setImages} />)
                                 }

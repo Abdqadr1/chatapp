@@ -1,19 +1,25 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
+import { useNavigate } from "react-router";
 import profileIMage from "../images/female-av.png";
-import { getAllConversation, getShortName, saveAllConversation } from "./utilities";
+import { getAllConversation, isTokenExpired, saveAllConversation } from "./utilities";
 
 const Contact = ({ obj, setCurrentChat, current, auth, setContacts }) => {
   const { name, last_msg, imagePath, phoneNumber } = obj;
   const img = imagePath ? imagePath : profileIMage;
-  const url = process.env.REACT_APP_SERVER_URL;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!auth.phoneNumber) return;
     const abortController = new AbortController();
-    axios.get(`${url}/get-contact-status/${auth.phoneNumber}/${phoneNumber}`,
-      { signal: abortController.signal })
+    axios.get(`${process.env.REACT_APP_SERVER_URL}/get-contact-status/${phoneNumber}`,
+      {
+        signal: abortController.signal,
+        headers: {
+            Authorization: `Bearer ${auth.access_token}`
+        }
+      })
       .then(res => {
         console.log(res.data);
         setContacts(s => {
@@ -29,7 +35,10 @@ const Contact = ({ obj, setCurrentChat, current, auth, setContacts }) => {
           saveAllConversation(auth.phoneNumber, allMsgs);
         }
       })
-      .catch(() => console.log("could not fetch user status"));
+      .catch(err => {
+        isTokenExpired(err, () => navigate("/login"));
+        console.log("could not fetch user status")
+      });
 
     return () => abortController.abort();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,8 +56,8 @@ const Contact = ({ obj, setCurrentChat, current, auth, setContacts }) => {
               <img width="35" height="35" className="rounded-pill border" src={img} alt="contact" />
             </Col>
             <Col sm="10">
-                <div className="chat-name">{getShortName(name, 30)}</div>
-                <div className="last-msg">{getShortName(last_msg, 30)}</div>
+                <div className="chat-name">{name}</div>
+                <div className="last-msg">{last_msg}</div>
             </Col>
             {/* <Col sm="2" className="px-0 d-flex align-items-center">
               {(unread && unread > 0) ? <Badge className="rounded-pill unread-badge" bg="warning">{unread}</Badge> : ""}

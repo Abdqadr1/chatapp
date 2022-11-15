@@ -6,7 +6,7 @@ import Chat from "./chat";
 import ContactInfo from "./contact-info";
 import Contacts from "./contacts";
 import { StompSessionProvider, useSubscription, useStompClient } from "react-stomp-hooks";
-import { addMessage, getAllConversation, getConversationFromStorage, getLastMsg, setConversationToStorage, SPINNERS_BORDER, updateSentMessage } from "./utilities";
+import { addMessage, getAllConversation, getConversationFromStorage, getLastMsg, isTokenExpired, setConversationToStorage, SPINNERS_BORDER, updateSentMessage } from "./utilities";
 import uuid from 'react-uuid';
 import UpdateModal from "./update-modal";
 
@@ -25,9 +25,12 @@ const ChatPage = ({ url, auth } ) => {
     const uploadFile = (name, id, file, send) => {
         const data = new FormData();
         data.append("file", file, name);
-        axios.put(`${url}/api/upload-files/${auth.phoneNumber}`, data,
+        axios.put(`${url}/api/upload-files`, data,
             {
                 signal: abortRef?.current.signal,
+                headers: {
+                    Authorization: `Bearer ${auth.access_token}`
+                },
                 onUploadProgress: (progressEvent) => {
                     const progressRef = document.querySelector(`.progress${id}`);
                     const percent = (progressEvent.loaded === progressEvent.total) ? 0
@@ -36,7 +39,8 @@ const ChatPage = ({ url, auth } ) => {
                 }
             })
             .then(res => send(res.data))
-            .catch(() => {
+            .catch((err) => {
+                isTokenExpired(err, () => navigate("/login"));
                 console.error("could not upload file");
                 setMessages(s => {
                     const find = s.find(c => c.id === id);
@@ -49,12 +53,18 @@ const ChatPage = ({ url, auth } ) => {
     const publishMessage = (msg, id) => {
         try {
             stompClient.publish({
-                destination: `/app/chat/${id}`, body: JSON.stringify({...msg, wav: "", image: "", doc: ""})
+                destination: `/app/chat/${id}`,
+                headers: {
+                    priority: 9, 
+                    Authorization: `Bearer ${auth.access_token}`
+                },
+                body: JSON.stringify({...msg, wav: "", image: "", doc: ""})
             });
             addMessage(auth.phoneNumber, {...msg, id}, currentChat.phoneNumber);
             let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
             listContacts(allContacts);
         } catch (e) {
+            isTokenExpired(e, () => navigate("/login"));
             console.info(e);
         }
     }
@@ -74,7 +84,6 @@ const ChatPage = ({ url, auth } ) => {
         setMessages(s => ([...s, { ...msg, id, }]));
         publishMessage(msg, id);
     }
-
 
     const listContacts = (allContacts) => {
         const list = [];
@@ -115,12 +124,20 @@ const ChatPage = ({ url, auth } ) => {
         let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
         listContacts(allContacts);
         axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}/${auth.phoneNumber}`,
-            { signal: abortRef?.current.signal })
+            {
+                signal: abortRef?.current.signal,
+                headers: {
+                    Authorization: `Bearer ${auth.access_token}`
+                }
+            })
             .then(res => {
                 console.log(res.data)
                 setUpdateInfo(s => ({...s, info: {...res.data}}))
             })
-            .catch(() => console.log("could not fetch user info"));
+            .catch((err) => {
+                isTokenExpired(err, () => navigate("/login"));
+                console.log("could not fetch user info")
+            });
             
         return () => {
             clearInterval(timer);
@@ -161,12 +178,20 @@ const ChatPage = ({ url, auth } ) => {
         const abortController = new AbortController();
         if (currentChat.phoneNumber) {
             const time = setInterval(() => {
-                axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}/${currentChat.phoneNumber}`,
-                    { signal: abortController.signal })
+                axios.get(`${url}/api/get-contact-status/${currentChat.phoneNumber}`,
+                    {
+                        signal: abortController.signal,
+                        headers: {
+                            Authorization: `Bearer ${auth.access_token}`
+                        }
+                    })
                     .then(res => {
                         setConnectionStatus(res.data?.status);
                     })
-                    .catch(() => console.log("could not fetch user status"));
+                    .catch(err => {
+                        isTokenExpired(err, () => navigate("/login"));
+                        console.log("could not fetch user status")
+                    });
             }, 5000);
             setTimer(s => {
                 clearInterval(s);
@@ -174,16 +199,20 @@ const ChatPage = ({ url, auth } ) => {
             });
         }
         return () => abortController.abort();
-    }, [auth.phoneNumber, currentChat.phoneNumber, url]);
-
-
+    }, [auth.access_token, auth.phoneNumber, currentChat.phoneNumber, navigate, url]);
 
     useEffect(() => {
         console.log("fetching conversation...");
         if (!auth?.phoneNumber || !currentChat?.phoneNumber) return;
         const abortController = new AbortController();
         let [, oldMessages] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
-        axios.get(`${url}/api/get-messages/${auth.phoneNumber}/${currentChat.phoneNumber}`, { signal: abortController.signal })
+        axios.get(`${url}/api/get-messages/${currentChat.phoneNumber}`,
+            {
+                signal: abortController.signal,
+                headers: {
+                    Authorization: `Bearer ${auth.access_token}`
+                }
+            })
             .then(res => {
                 console.log(res.data);
                 let lastMsg = "";
@@ -207,12 +236,13 @@ const ChatPage = ({ url, auth } ) => {
                     return [...s];
                 });
             })
-            .catch(() => {
+            .catch(err => {
                 setMessages(oldMessages);
+                isTokenExpired(err, () => navigate("/login"));
                 console.log("could not fetch conversation")
             })
         return () => abortController.abort();
-    },[auth.name, auth.phoneNumber, currentChat.phoneNumber, url])
+    },[auth.access_token, auth.name, auth.phoneNumber, currentChat.phoneNumber, navigate, url])
 
     
     if (!auth?.access_token || !auth?.phoneNumber) return <Navigate to="/login" />;
@@ -243,15 +273,20 @@ const ChatPage = ({ url, auth } ) => {
 const StompWrapper = ()  => {
     const auth = JSON.parse(sessionStorage.getItem("auth") || "{}");
     const socketUrl = process.env.REACT_APP_SOCKET_URL;
-    const serverUrl = process.env.REACT_APP_SERVER_URL;
     const [isReady, setReady] = useState(false);
+    const navigate = useNavigate();
 
     useLayoutEffect(() => {
         const abortController = new AbortController();
         if (!auth.phoneNumber) return;
         const allMsgs = getAllConversation(auth.phoneNumber);
-        axios.get(`${serverUrl}/get-user-messages/${auth.phoneNumber}`,
-            { signal: abortController.signal })
+        axios.get(`${process.env.REACT_APP_SERVER_URL}/get-user-messages`,
+            {
+                signal: abortController.signal,
+                headers: {
+                    Authorization: `Bearer ${auth.access_token}`
+                }
+            })
             .then(res => {
                 console.log(res.data);
                 res.data.forEach(msg => {
@@ -273,19 +308,26 @@ const StompWrapper = ()  => {
                 });
                 sessionStorage.setItem(auth.phoneNumber + "_messages", JSON.stringify(allMsgs));
             })
-            .catch(() => console.log("could not fetch user messages"))
+            .catch(err => {
+                isTokenExpired(err, () => navigate("/login"));
+                console.log("could not fetch user messages")
+            })
             .finally(() => setReady(true));
         
         return () => abortController.abort();
 
-    }, [auth.phoneNumber, serverUrl]);
+    }, [auth.access_token, auth.phoneNumber, navigate]);
 
     return ( 
         <>
             {
                 (isReady) ?
-                <StompSessionProvider url={socketUrl + "/ws"} connectHeaders={{ "Authorization": "Bearer ..." }} connectionTimeout={5000}
-                    debug={(str) => { console.log(str)}}
+                    <StompSessionProvider url={socketUrl + "/ws"} connectionTimeout={5000}  debug={(str) => { console.log(str)}}
+                        connectHeaders={{ 'Authorization': `Bearer ${auth.access_token}` }}
+                        onStompError={err => {
+                            console.log(err)
+                            isTokenExpired(err, () => navigate("/login"))
+                        }}
                     >
                         <ChatPage url={socketUrl} auth={auth} />
                 </StompSessionProvider>

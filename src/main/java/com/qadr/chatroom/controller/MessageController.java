@@ -27,6 +27,7 @@ import static com.qadr.chatroom.s3.S3Properties.CHAT_FOLDER_NAME;
 public class MessageController {
     @Autowired private MessageService messageService;
     @Autowired private AmazonS3Util amazonS3Util;
+    @Autowired private AuthController authController;
 
     @MessageMapping("/chat/{key}")
     public void sendMessage(@DestinationVariable String key,  @Payload SocketMessage message) {
@@ -34,9 +35,9 @@ public class MessageController {
         messageService.saveAndSend(message, key);
     }
 
-    @PutMapping("/api/upload-files/{number}")
-    public String uploadPhotos(@RequestParam("file") MultipartFile file,
-                               @PathVariable("number") String number) throws InterruptedException, IOException {
+    @PutMapping("/api/upload-files")
+    public String uploadPhotos(@RequestParam("file") MultipartFile file) throws InterruptedException, IOException {
+        String number = authController.getAuthNumber();
         if (file == null || file.isEmpty()) return "";
         String fileName = generateFileName(number, file);
 //        System.out.println(fileName + file.getSize());

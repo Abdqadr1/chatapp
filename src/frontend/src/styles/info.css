@@ -66,6 +66,7 @@
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
+    padding-inline: 5px;
     max-height: 150px;
     overflow-y: auto;
     scroll-behavior: smooth;

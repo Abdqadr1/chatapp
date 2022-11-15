@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, Button, Col, FloatingLabel, Form, Modal, Row } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import headerImage from "../images/male-av.png";
-import { isFileValid, listFormData, showThumbnail, SPINNERS_BORDER_HTML } from "./utilities";
+import { isFileValid, isTokenExpired, listFormData, showThumbnail, SPINNERS_BORDER_HTML } from "./utilities";
 
 const UpdateModal = ({ obj, setShow, auth }) => {
     const { bio, imagePath } = obj.info;
@@ -46,8 +46,13 @@ const UpdateModal = ({ obj, setShow, auth }) => {
         const data = new FormData(target);
         btn.innerHTML = SPINNERS_BORDER_HTML;
         listFormData(data);
-        const url = `${serverUrl}/update-info/${auth.phoneNumber}`;
-        axios.put(url, data, { signal: abortRef?.current.signal })
+        const url = `${serverUrl}/update-info`;
+        axios.put(url, data, {
+            signal: abortRef?.current.signal,
+            headers: {
+                Authorization: `Bearer ${auth.access_token}`
+            }
+        })
             .then(res => {
                 console.log(res.data)
                 setAlert(s => ({
@@ -63,6 +68,7 @@ const UpdateModal = ({ obj, setShow, auth }) => {
                 
             })
             .catch(err => {
+                isTokenExpired(err, () => navigate("/login"));
                 setAlert(s => ({
                     ...s, show: true,variant: "danger",
                     message: err?.response?.data.message || "An error occurs updating info"
