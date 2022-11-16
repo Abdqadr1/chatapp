@@ -123,7 +123,7 @@ const ChatPage = ({ url, auth } ) => {
         if (!auth?.access_token || !auth?.phoneNumber) navigate("/login");
         let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
         listContacts(allContacts);
-        axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}/${auth.phoneNumber}`,
+        axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}`,
             {
                 signal: abortRef?.current.signal,
                 headers: {

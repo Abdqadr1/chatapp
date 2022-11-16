@@ -122,7 +122,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                     </div>
                 </Col>
                 <Col md={3}>
-                    <div className="d-flex justify-content-between">
+                    {/* <div className="d-flex justify-content-between">
                         <div className="header-icons-div" title="voice call">
                             <Icon className="text-secondary header-icons" icon="fluent:call-48-filled" />
                         </div>
@@ -132,7 +132,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                         <div className="header-icons-div" title="info">
                             <Icon className="text-secondary header-icons" icon="ant-design:info-circle-filled" />
                         </div>
-                    </div>
+                    </div> */}
                 </Col>
                 
             </Row>
@@ -146,7 +146,7 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                     }
                 </div>
             </div>
-            <div className="write-div d-flex align-items-center justify-content-between bg-light border">
+            <div className="write-div d-flex align-items-center justify-content-between border">
                 <input onChange={handleSelectImage} type="file" className="d-none" id="at-images"
                     accept="image/jpg, image/png, image/jpeg" />
 

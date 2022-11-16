@@ -48,6 +48,22 @@ export const isAuthValid = (auth) => {
     return false
 }
 
+export function formatTime(time) {
+    if (time) {
+        const current = new Date();
+        const old = new Date(time);
+        const rtf = new Intl.RelativeTimeFormat("en", {
+            localeMatcher: "best fit", // other values: "lookup"
+            numeric: "always", // other values: "auto"
+            style: "long", // other values: "short" or "narrow"
+        });
+        if (current.getFullYear !== old.getFullYear) {
+            return rtf.format(old.getFullYear - current.getFullYear, "years");
+        }
+        return old.toLocaleTimeString();
+    }
+    return "";
+}
 
 export const isTokenExpired = (err, cb) => {
     const res = err?.response;

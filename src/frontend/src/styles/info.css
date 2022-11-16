@@ -42,6 +42,10 @@
     border-color: transparent !important;
 }
 
+.accordion-item{
+    background: #EAD7D9 !important;
+}
+
 .accordion-button:not(.collapsed),
 .accordion-button.collapsed {
     box-shadow: none !important;

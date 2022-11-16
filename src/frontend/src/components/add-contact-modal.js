@@ -42,6 +42,7 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
                 }
             })
             .then(res => {
+                setAlert(s => ({...s,  show: false}))
                 const { phoneNumber, name, photo } = res.data;
                 const c = {
                     key: phoneNumber,name,

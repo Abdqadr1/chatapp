@@ -22,8 +22,13 @@
 .message-container{
     padding: 10px;
     word-wrap: break-word;
-    background-color: var(--light);
     border-radius: 8px;
+}
+.message-container.sent{
+    background-color: #DCE3F6;
+}
+.message-container.received{
+    background-color: #F1EBF5;
 }
 .inside::-webkit-scrollbar {
     display: none;
@@ -42,6 +47,7 @@
     border-radius: 8px;
     padding: 8px 10px;
     z-index: 100;
+    background-color: #e5e7f1e4;
 }
 .msg-input{
     border: none;
@@ -49,7 +55,7 @@
     padding: 3px;
     background-color: transparent;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     width: calc(100% - 30px);
 }
 .right{

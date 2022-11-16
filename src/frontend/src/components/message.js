@@ -1,14 +1,14 @@
 import { Icon } from "@iconify/react";
 import { Col, Row } from "react-bootstrap";
-import { fileTypeObj } from "./utilities";
+import { fileTypeObj, formatTime } from "./utilities";
 
 const Message = ({userPhone, setViewImage, obj}) => {
     let {  text, image, imagePath, id, time, sender,
      status, audioPath, wav, doc, docPath, document: docment } = obj;
     const isSent = sender === userPhone;
     const dir = isSent ? "justify-content-end" : "justify-content-start";
+    const bg = isSent ? "sent" : "received";
     const timeDir = isSent ? "text-end" : "text-start";
-    time = new Date(time).toLocaleTimeString();
     let icon = "";
     if (isSent) {
         if (status === "PENDING") icon = <Icon className="ms-2" icon="pajamas:status-waiting" />;
@@ -55,7 +55,7 @@ const Message = ({userPhone, setViewImage, obj}) => {
             <Col sm={10}>
                 <div className={"d-flex "+dir+" w-100"}>
                     <div className="message-div">
-                        <div className='message-container'>
+                        <div className={`message-container ${bg}`}>
                             {(image || imagePath) ?
                                 <figure className="position-relative mb-1">
                                     <img onClick={viewImage} src={image || imagePath} alt='message' className="msg-image" />
@@ -75,7 +75,7 @@ const Message = ({userPhone, setViewImage, obj}) => {
                             {docEl}
                         </div>
                         <div className={timeDir + " message-time"}>
-                            <small>{time}</small>
+                            <small>{formatTime(time)}</small>
                             {icon}
                         </div>
                     </div>

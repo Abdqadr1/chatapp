@@ -13,13 +13,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.qadr.chatroom.s3.S3Properties.USER_IMAGE_FOLDER_NAME;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -46,7 +42,7 @@ public class UserService implements UserDetailsService {
         User byPhoneNumber = getByPhoneNumber(number)
                 .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user"));
 
-        return new UserDTO(byPhoneNumber,s3Properties);
+        return new UserDTO(byPhoneNumber, s3Properties);
     }
 
     @Override

@@ -17,7 +17,7 @@ const ContactInfo = ({ messages, status, currentChat }) => {
         setViewImage(s => ({
             ...s,
             show: true,
-            image: headerImage
+            image: imagePath || headerImage
         }))
     }
     useEffect(() => {

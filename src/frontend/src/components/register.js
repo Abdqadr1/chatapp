@@ -16,7 +16,10 @@ const Register = () => {
         abortRef.current = new AbortController();
         axios.get('http://api-env.eba-irpspqyp.us-east-1.elasticbeanstalk.com/country/all',
             { signal: abortRef?.current.signal })
-            .then(res => setCountries(res.data))
+            .then(res => {
+                setAlert(s => ({...s,  show: false}))
+                setCountries(res.data)
+            })
             .catch(() => setAlert({ show: true, message: "Could not fetch countries" }))
         return () => abortRef?.current.abort();
     }, [abortRef])

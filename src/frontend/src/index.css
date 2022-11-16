@@ -18,6 +18,7 @@ body {
     -ms-overflow-style: none;
     /* IE and Edge */
     scrollbar-width: none;
+  background-color: #E5D8EA !important;
 }
 
 code {
@@ -35,8 +36,8 @@ code {
   box-sizing: border-box;
   border: 1px solid #6c757d;
   margin: 8px;
-  background-color: #d57e45;
-  /* mix-blend-mode: exclusion; */
+  background: rgb(232, 218, 234);
+    background: linear-gradient(22deg, rgba(232, 218, 234, 1) 28%, rgba(234, 215, 219, 1) 57%);
 }
 .chat-row, .chat-col, .msg-col{
   height: 100%;
