@@ -42,14 +42,14 @@ const Login = () => {
 
     return ( 
         <div className="d-flex align-items-center justify-content-center" style={{height: '100vh'}}>
-            <Form onSubmit={handleSubmit} className="border rounded px-3 py-4" style={{width: "40vw"}} >
+            <Form onSubmit={handleSubmit} className="bod rounded px-3 py-4" style={{width: "40vw"}} >
                 <p className="text-center fw-bold">Log In</p>
                 <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show} dismissible onClose={toggleAlert}>
                     <small>{alert.message}</small>
                 </Alert>
-                <Form.Control placeholder="phonenumber" name="phoneNumber" required minLength={10} maxLength={15} />
+                <Form.Control className="input" placeholder="phonenumber" name="phoneNumber" required minLength={10} maxLength={15} />
 
-                <Form.Control  className="my-3" type="password" placeholder="password" name="password" required minLength={8} maxLength={100} />
+                <Form.Control  className="my-3 input" type="password" placeholder="password" name="password" required minLength={8} maxLength={100} />
                 <Button className="mt-2 w-100" type="submit" variant="success">Log In </Button>
                 <div className="d-flex justify-content-end mt-2">
                     <Link className="text-decoration-none text-info fs-5" to={"/register"} >register</Link>

@@ -47,11 +47,11 @@ const ContactInfo = ({ messages, status, currentChat }) => {
             <div className="my-2 text-end pe-3">
                 <small><Link className="text-decoration-none text-danger " to={"/logout"}>Logout</Link></small>
             </div>
-            <div className="p-3 border-bottom">
+            <div className="p-3 bodtom">
                 <img src={imagePath || headerImage} alt="contact" className="info-image" onClick={handleClick} />
                 <div className="contact-name">{name}</div>
                 <div className="contact-status">{status ? "Active Now" : "Offline Now"}</div> 
-                <FloatingLabel controlId="floatingPassword" label="Bio" className="my-2">
+                <FloatingLabel controlId="floatingPassword" label="Bio" className="my-2 text-dark">
                     <Form.Control defaultValue={bio ?? ""} maxLength={100} disabled />
                 </FloatingLabel>
             </div>

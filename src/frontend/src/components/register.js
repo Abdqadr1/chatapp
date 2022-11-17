@@ -6,7 +6,7 @@ import axios from "axios";
 
 const Register = () => {
     const [countries, setCountries] = useState([]);
-    const [form, setForm] = useState({ firstName: '', lastName: '', password: '', confirm: '', phoneNumber: ''})
+    const [form, setForm] = useState({ name: '',password: '', confirm: '', phoneNumber: ''})
     const [abortRef, alertRef] = [useRef(), useRef()];
     const [alert, setAlert] = useState({ show: false, message: "", variant: "danger" });
     const navigate = useNavigate();
@@ -66,27 +66,28 @@ const Register = () => {
     
     return (  
         <div className="d-flex align-items-center justify-content-center" style={{height: '100vh'}}>
-            <Form onSubmit={handleSubmit} className="border rounded px-3 py-4">
+            <Form onSubmit={handleSubmit} className="bod rounded px-3 py-4">
                 <p className="text-center fw-bold">Register</p>
                 <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show} dismissible onClose={toggleAlert}>
                     {alert.message}
                 </Alert>
-                <div className="d-flex justify-content-between my-2">
-                    <Form.Control value={form?.firstName} onInput={handleInput} className="me-1" placeholder="Enter first name" name="firstName" required maxLength={20} />
-                    <Form.Control value={form?.lastName} onInput={handleInput} className="ms-1" placeholder="Enter last name" name="lastName" required maxLength={20} />
-                </div>
+                <Form.Control value={form?.firstName} onInput={handleInput} className="me-1 my-2 bg-transparent border-secondary" placeholder="Enter name"
+                    name="name" minLength={4} required maxLength={40} />
                  <div className="d-flex justify-content-between align-items-center my-2">
-                    <Form.Select style={{width: '28%'}} id="countrySelect" defaultValue={''} onChange={changeCallCode}>
+                    <Form.Select className=" bg-transparent border-secondary" style={{width: '28%'}} id="countrySelect" defaultValue={''} onChange={changeCallCode}>
                         <option value='' hidden>---</option>
                         {
                             countries.map(c => <option key={c.code} value={c.callCode}>{c.code} ({c.callCode})</option>)
                         }
                     </Form.Select>
-                    <Form.Control value={form?.phoneNumber} onInput={handleInput} style={{ width: '70%' }} placeholder="Enter phone number" name="phoneNumber" required minLength={10} maxLength={15} />
+                    <Form.Control className=" bg-transparent border-secondary" value={form?.phoneNumber} onInput={handleInput} style={{ width: '70%' }}
+                        placeholder="Enter phone number" name="phoneNumber" required minLength={10} maxLength={15} />
                 </div>
 
-                <Form.Control value={form?.password} onInput={handleInput} className="my-2" type="password" placeholder="Enter password" name="password" required minLength={8} maxLength={100} />
-                <Form.Control value={form?.confirm} onInput={handleInput} className="my-2" type="password" placeholder="Confirm password" name="confirm" required minLength={8} maxLength={100} />
+                <Form.Control value={form?.password} onInput={handleInput} className="my-2 bg-transparent border-secondary" type="password" placeholder="Enter password" 
+                    name="password" required minLength={8} maxLength={100} />
+                <Form.Control value={form?.confirm} onInput={handleInput} className="my-2 bg-transparent border-secondary" type="password" placeholder="Confirm password" 
+                    name="confirm" required minLength={8} maxLength={100} />
                 <Button className="mt-2 w-100" type="submit" variant="success">Register</Button>
                 <div className="d-flex justify-content-end mt-2">
                     <Link className="text-decoration-none text-info fs-5" to={"/login"} >Login</Link>

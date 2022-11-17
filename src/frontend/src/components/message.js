@@ -1,8 +1,8 @@
 import { Icon } from "@iconify/react";
 import { Col, Row } from "react-bootstrap";
-import { fileTypeObj, formatTime } from "./utilities";
+import { fileTypeObj, formatDate, formatTime } from "./utilities";
 
-const Message = ({userPhone, setViewImage, obj}) => {
+const Message = ({userPhone, setViewImage, obj, index, compareTime}) => {
     let {  text, image, imagePath, id, time, sender,
      status, audioPath, wav, doc, docPath, document: docment } = obj;
     const isSent = sender === userPhone;
@@ -49,9 +49,11 @@ const Message = ({userPhone, setViewImage, obj}) => {
             <div className={`image-progress progress${id}`}></div>
         </div>
     }
-    
     return (
         <Row className={dir + " mx-0"}>
+            { 
+                compareTime(index) ? <Col className="day-diff" sm={12}>{ formatDate(time) }</Col> : ""
+            }
             <Col sm={10}>
                 <div className={"d-flex "+dir+" w-100"}>
                     <div className="message-div">

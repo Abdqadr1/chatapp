@@ -10,7 +10,7 @@ import { addMessage, getAllConversation, getConversationFromStorage, getLastMsg,
 import uuid from 'react-uuid';
 import UpdateModal from "./update-modal";
 
-const ChatPage = ({ url, auth } ) => {
+const ChatPage = ({ url, auth, contactList } ) => {
     const [currentChat, setCurrentChat] = useState({});
     const [updateInfo, setUpdateInfo] = useState({ show: false, info: {} })
     const [timer, setTimer] = useState();
@@ -121,7 +121,7 @@ const ChatPage = ({ url, auth } ) => {
     useLayoutEffect(() => {
         abortRef.current = new AbortController();
         if (!auth?.access_token || !auth?.phoneNumber) navigate("/login");
-        let [allContacts, ] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
+        let [allContacts,] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
         listContacts(allContacts);
         axios.get(`${url}/api/get-contact-status/${auth.phoneNumber}`,
             {
@@ -131,12 +131,10 @@ const ChatPage = ({ url, auth } ) => {
                 }
             })
             .then(res => {
-                console.log(res.data)
                 setUpdateInfo(s => ({...s, info: {...res.data}}))
             })
             .catch((err) => {
                 isTokenExpired(err, () => navigate("/login"));
-                console.log("could not fetch user info")
             });
             
         return () => {
@@ -158,7 +156,7 @@ const ChatPage = ({ url, auth } ) => {
                     if (index > -1) {
                         const old = s[index];
                         s[index] = { ...old, ...obj };
-                        console.log({ ...old, ...obj });
+                        // console.log({ ...old, ...obj });
                     }
                     return  [...s]
                 })
@@ -190,7 +188,6 @@ const ChatPage = ({ url, auth } ) => {
                     })
                     .catch(err => {
                         isTokenExpired(err, () => navigate("/login"));
-                        console.log("could not fetch user status")
                     });
             }, 5000);
             setTimer(s => {
@@ -200,9 +197,9 @@ const ChatPage = ({ url, auth } ) => {
         }
         return () => abortController.abort();
     }, [auth.access_token, auth.phoneNumber, currentChat.phoneNumber, navigate, url]);
+    
 
     useEffect(() => {
-        console.log("fetching conversation...");
         if (!auth?.phoneNumber || !currentChat?.phoneNumber) return;
         const abortController = new AbortController();
         let [, oldMessages] = getConversationFromStorage(auth.phoneNumber, currentChat.phoneNumber, auth.name);
@@ -214,7 +211,6 @@ const ChatPage = ({ url, auth } ) => {
                 }
             })
             .then(res => {
-                console.log(res.data);
                 let lastMsg = "";
                 res.data.forEach(msg => {
                     let index = oldMessages.findIndex(e => e.id === msg.id);
@@ -223,7 +219,6 @@ const ChatPage = ({ url, auth } ) => {
                         return;
                     }
                     oldMessages.push(msg);
-                    console.log(getLastMsg(msg))
                     lastMsg = getLastMsg(msg)
                 });
                 setConversationToStorage(auth.phoneNumber, currentChat.phoneNumber, oldMessages);
@@ -239,7 +234,6 @@ const ChatPage = ({ url, auth } ) => {
             .catch(err => {
                 setMessages(oldMessages);
                 isTokenExpired(err, () => navigate("/login"));
-                console.log("could not fetch conversation")
             })
         return () => abortController.abort();
     },[auth.access_token, auth.name, auth.phoneNumber, currentChat.phoneNumber, navigate, url])
@@ -248,19 +242,19 @@ const ChatPage = ({ url, auth } ) => {
     if (!auth?.access_token || !auth?.phoneNumber) return <Navigate to="/login" />;
     const style = currentChat?.phoneNumber ? "" : "no-chat";
     return ( 
-        <div className="chat-page-container">
+        <div className="chat-page-container bod">
             <Row className="justify-content-center chat-row">
-                <Col sm="3" className="border chat-col px-0">
+                <Col sm="3" className=" chat-col px-0">
                     <Contacts setCurrentChat={setCurrentChat} currentChat={currentChat} contacts={contacts}
                         setContacts={setContacts} auth={auth} searchContact={searchContact} info={updateInfo.info}
                         setUpdateInfo={setUpdateInfo} />
                 </Col>
-                <Col sm="6" className={`border chat-col ${style}`}>
+                <Col sm="6" className={`bodleft chat-col ${style}`}>
                     <Chat auth={auth} contact={currentChat} messages={messages}
                         setMessages={setMessages} connectionStatus={connectionStatus} sendMessage={sendMessage} />
                     <div className="cloud">select a chat.</div>
                 </Col>
-                <Col sm="3" className={`border px-0 chat-col ${style}`}>
+                <Col sm="3" className={`bodleft px-0 chat-col ${style}`}>
                     <ContactInfo currentChat={currentChat} messages={messages} status={connectionStatus} />
                     <div className="cloud">select a chat.</div>
                 </Col>
@@ -288,7 +282,6 @@ const StompWrapper = ()  => {
                 }
             })
             .then(res => {
-                console.log(res.data);
                 res.data.forEach(msg => {
                     let key = msg.receiver === auth.phoneNumber ? msg.sender : msg.receiver;
                     const fn = allMsgs.find(c => c.key === key);
@@ -310,7 +303,6 @@ const StompWrapper = ()  => {
             })
             .catch(err => {
                 isTokenExpired(err, () => navigate("/login"));
-                console.log("could not fetch user messages")
             })
             .finally(() => setReady(true));
         
@@ -322,10 +314,9 @@ const StompWrapper = ()  => {
         <>
             {
                 (isReady) ?
-                    <StompSessionProvider url={socketUrl + "/ws"} connectionTimeout={5000}  debug={(str) => { console.log(str)}}
+                    <StompSessionProvider url={socketUrl + "/ws"} connectionTimeout={5000}  debug={(str) => { }}
                         connectHeaders={{ 'Authorization': `Bearer ${auth.access_token}` }}
                         onStompError={err => {
-                            console.log(err)
                             isTokenExpired(err, () => navigate("/login"))
                         }}
                     >

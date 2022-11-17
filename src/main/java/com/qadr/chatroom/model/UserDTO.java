@@ -40,7 +40,7 @@ public class UserDTO {
     }
 
     public String getImagePath (S3Properties s3Properties){
-        return s3Properties.getURI() + USER_IMAGE_FOLDER_NAME + "/" +
+        return photo == null || photo.isBlank() ? "" : s3Properties.getURI() + USER_IMAGE_FOLDER_NAME + "/" +
                 URLEncoder.encode(phoneNumber +"/" + photo, StandardCharsets.UTF_8);
     }
 }

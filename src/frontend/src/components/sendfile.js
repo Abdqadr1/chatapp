@@ -23,12 +23,12 @@ const SendFileModal = ({ obj, setShow, callback, sendMessage }) => {
             <Modal.Header closeButton>
             </Modal.Header>
             <Modal.Body className="text-center">
-                <img src={obj.image} alt='message' height={400} className="modal-image mb-2" />
-                  <div className="write-div d-flex align-items-center justify-content-between bg-light border">
+                <img src={obj.image} alt='message' height={400} className="modal-image mb-3" />
+                  <div className="write-div d-flex align-items-center justify-content-between bg-transparent border-secondary border">
                     <div className="right">
-                        <input ref={inputRef} className="msg-input" type='text' name="text" placeholder="Type message..." />
+                        <input ref={inputRef} className="msg-input text-dark" type='text' name="text" placeholder="Type message..." />
                     </div>
-                    <Icon icon="akar-icons:send" title="send" className="write-icon" onClick={sendMsg} />
+                    <Icon icon="akar-icons:send" title="send" className="write-icon text-dark" onClick={sendMsg} />
                 </div>
             </Modal.Body>
             <Modal.Footer>

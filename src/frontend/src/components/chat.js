@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import "../styles/chat.css";
 import headerImage from "../images/male-av.png";
 import Message from "./message";
-import { getShortName, isFileValid, scrollToBottom, showThumbnail } from "./utilities";
+import { getShortName, isDayDifferent, isFileValid, scrollToBottom, showThumbnail } from "./utilities";
 import { useEffect, useRef, useState } from "react";
 import MessageModal from "./message_modal";
 import ImageModal from "./image-modal";
@@ -108,10 +108,15 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
         }
     }
 
+    const checkTime = index => {
+        if (index === 0) return true;
+        return isDayDifferent(messages[index].time, messages[index - 1].time);
+    }
+
 
     return ( 
         <div className="msg-col">
-            <Row className="chat-header justify-content-between border-bottom py-3">
+            <Row className="chat-header justify-content-between py-3 bodtom">
                 <Col md={8}>
                     <div className="d-flex justify-content-start">
                         <img width="35" height="35" className="rounded-pill border" src={imagePath || headerImage} alt="contact" />
@@ -141,7 +146,9 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                     {
                        
                         messages.length > 0 ?
-                            messages.map((m, i) => <Message key={m.id} userPhone={myPhoneNumber} obj={m} setViewImage={setViewImage} />) :
+                            messages.map((m, i) => <Message key={m.id} userPhone={myPhoneNumber} obj={m} setViewImage={setViewImage}
+                                index={i} compareTime={checkTime}
+                            />) :
                         <div className="text-center mt-4"><small>No message found. Start conversation</small></div>
                     }
                 </div>
@@ -157,11 +164,11 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
                     <div className="file-drop">
                         <Icon icon="ooui:attachment" className="write-icon" title="attach files" />
                         <div className="attach-dropdown">
-                            <label htmlFor="at-images" className="files-label bg-danger text-light" title="Images">
-                                <Icon icon="bi:images" />
-                            </label>
-                            <label htmlFor="at-documents" className="files-label bg-info text-danger" title="Documents">
+                            <label htmlFor="at-documents" className="files-label text-info" title="Documents">
                                 <Icon icon="akar-icons:file" />
+                            </label>
+                            <label htmlFor="at-images" className="files-label text-warning" title="Images">
+                                <Icon icon="bi:images" />
                             </label>
                         </div>
                     </div>
@@ -179,7 +186,8 @@ const Chat = ({ auth, contact, messages, sendMessage: send, connectionStatus }) 
             <MessageModal obj={msgModal} setShow={setMsgModal} />
             <ImageModal obj={viewImage} setShow={setViewImage} />
             <SendFileModal obj={photoModal} setShow={setPhotoModal} sendMessage={sendMessage} />
-            <AudioModal obj={audioModal} setShow={setAudioModal} sendMessage={send} myPhoneNumber={myPhoneNumber} phoneNumber={phoneNumber} />
+            <AudioModal obj={audioModal} setShow={setAudioModal} sendMessage={send} myPhoneNumber={myPhoneNumber}
+                phoneNumber={phoneNumber} showModal={setMsgModal} />
         </div>
      );
 }

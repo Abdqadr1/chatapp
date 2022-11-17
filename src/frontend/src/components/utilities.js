@@ -50,26 +50,42 @@ export const isAuthValid = (auth) => {
 
 export function formatTime(time) {
     if (time) {
-        const current = new Date();
-        const old = new Date(time);
-        const rtf = new Intl.RelativeTimeFormat("en", {
-            localeMatcher: "best fit", // other values: "lookup"
-            numeric: "always", // other values: "auto"
-            style: "long", // other values: "short" or "narrow"
-        });
-        if (current.getFullYear !== old.getFullYear) {
-            return rtf.format(old.getFullYear - current.getFullYear, "years");
-        }
-        return old.toLocaleTimeString();
+        time = new Date(time);
+        let options = {  
+            // weekday: "long", year: "numeric", month: "short",  
+            // day: "numeric",
+            hour: "2-digit", minute: "2-digit"  
+        };  
+
+        return time.toLocaleTimeString("en-us", options);
     }
     return "";
+}
+
+
+export function formatDate(time) {
+    if (time) {
+        time = new Date(time); 
+        let formatter = new Intl.DateTimeFormat('en-GB', { dateStyle: 'full' })
+        return formatter.format(time);
+    }
+     return "";
+}
+
+export function isDayDifferent(currTime, oldTime) {
+    if (currTime && oldTime) {
+        const currDate = new Date(currTime);
+        const old = new Date(oldTime);
+        let ret = old.getDate() !== currDate.getDate();
+        return ret;
+    }
+    return false;
 }
 
 export const isTokenExpired = (err, cb) => {
     const res = err?.response;
     if (res === null || res === undefined) return;
     const message = res?.data?.message?.toLowerCase() || res?.data?.error?.toLowerCase();
-    console.log(message);
     if (Number(res.status) === 406
         && message.indexOf("token") > -1
         && message.indexOf("expired") > -1) cb();
@@ -94,7 +110,6 @@ export const downloadFile = (url, ext, cb) => {
         console.log(`Received header [${fileNameHeader}]: ${suggestedFileName}, effective fileName: ${effectiveFileName}`);
 
         // Let the user save the file.
-         console.log(res.data);
          // create file link in browser's memory
         const href = URL.createObjectURL(res.data);
 
@@ -237,3 +252,4 @@ export const fileTypeObj = {
         csv: "bi:filetype-csv",
         wav: "dashicons:media-audio",
 }
+ 

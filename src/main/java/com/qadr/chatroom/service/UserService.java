@@ -48,20 +48,20 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User byPhoneNumber = getByPhoneNumber(username)
-                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number"));
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number " + username));
         return new MyUserDetails(byPhoneNumber);
     }
 
     public void updateStatus(String number) {
         User byPhoneNumber = getByPhoneNumber(number)
-                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number"));
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number" + number));
         byPhoneNumber.setLastSeen(LocalDateTime.now());
         userRepository.save(byPhoneNumber);
     }
 
     public void updateInfo(String bio, String number, String photo) {
         User byPhone = getByPhoneNumber(number)
-                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number"));
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "Could not find user with number "+number));
         byPhone.setBio(bio.isEmpty() ? byPhone.getBio() : bio);
         byPhone.setLastSeen(LocalDateTime.now());
         byPhone.setPhoto(photo.isEmpty() ? byPhone.getPhoto() :  photo);

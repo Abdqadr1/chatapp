@@ -19,12 +19,16 @@
     font-size: 11px;
 }
 .contact-search{
+    color: var(--secondary-hover) !important;
     margin-block: 20px;
-    height: 30px;
+    height: 35px;
     font-size: 14px;
+    background: transparent;
+    border-color: var(--secondary-hover);
 }
 .contact-search:focus{
     box-shadow: none;
+    background: transparent;
 }
 .contact-menu{
     border-radius: 50% !important;
@@ -59,5 +63,5 @@
     clear: left;
 }
 .contact:hover{
-    background-color: var(--secondary-hover);
+    background-color: var(--secondary);
 }

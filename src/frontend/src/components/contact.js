@@ -21,11 +21,9 @@ const Contact = ({ obj, setCurrentChat, current, auth, setContacts }) => {
         }
       })
       .then(res => {
-        console.log(res.data);
         setContacts(s => {
           const idx = s.findIndex(c => c.phoneNumber === phoneNumber);
           if (idx > -1) s[idx] = { ...s[idx], ...res.data };
-          console.log(allMsgs);
           return [...s];
         });
         const allMsgs = getAllConversation(auth.phoneNumber);
@@ -37,7 +35,6 @@ const Contact = ({ obj, setCurrentChat, current, auth, setContacts }) => {
       })
       .catch(err => {
         isTokenExpired(err, () => navigate("/login"));
-        console.log("could not fetch user status")
       });
 
     return () => abortController.abort();
@@ -51,9 +48,9 @@ const Contact = ({ obj, setCurrentChat, current, auth, setContacts }) => {
   }
 
     return (
-          <Row className="justify-content-between py-2 border-bottom mx-0 contact" onClick={handleClick}>
+          <Row className="justify-content-between py-2 bodtom mx-0 contact" onClick={handleClick}>
             <Col sm="2">
-              <img width="35" height="35" className="rounded-pill border" src={img} alt="contact" />
+              <img width="35" height="35" className="rounded-pill border" src={img || profileIMage} alt="contact" />
             </Col>
             <Col sm="10">
                 <div className="chat-name">{name}</div>

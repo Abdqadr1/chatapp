@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import { useEffect } from "react";
 import { Modal } from "react-bootstrap";
 
-const AudioModal = ({ sendMessage, obj, setShow, myPhoneNumber, phoneNumber }) => {
+const AudioModal = ({ sendMessage, obj, setShow, myPhoneNumber, phoneNumber, showModal }) => {
     const hideModal = () => setShow(s => ({ ...s, show: false }));
 
     const sendMsg = (audio) => {
@@ -33,7 +33,6 @@ const AudioModal = ({ sendMessage, obj, setShow, myPhoneNumber, phoneNumber }) =
 
         mediaRecorder.addEventListener('stop', e => {
             const blob = new Blob(recordChunks, {type: options.mimeType}); 
-            console.log(recordChunks, blob);
             sendMsg(blob);
         })
         btn.addEventListener('click', e => { mediaRecorder.stop();})
@@ -46,7 +45,21 @@ const AudioModal = ({ sendMessage, obj, setShow, myPhoneNumber, phoneNumber }) =
             const btn = document.querySelector("#stopRecordBtn");
             navigator.mediaDevices.getUserMedia({ video: false, audio: true })
                 .then(str => handleAudioData(str, btn))
-                .catch((err) => console.log("Needs microphone permission", err));
+                .catch((err) => {
+                    hideModal();
+                     if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+                        showModal(s => ({ ...s, show: true, message: "Device not found" }));
+                    } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+                        showModal(s => ({ ...s, show: true, message: "Device is in use" }));
+                    } else if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+                        showModal(s => ({ ...s, show: true, message: "Permission was denied" }));
+                    } else if (err.name === "TypeError" || err.name === "TypeError") {
+                        showModal(s => ({ ...s, show: true, message: "Device not found" }));
+                    } else {
+                        //other errors 
+                        showModal(s => ({ ...s, show: true, message: "Could not record" }));
+                    }
+                });
         }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

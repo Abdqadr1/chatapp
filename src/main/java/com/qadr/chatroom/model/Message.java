@@ -33,19 +33,19 @@ public class Message {
     private String key;
 
     public String getImagePath (){
-        return photo == null || photo.isEmpty() ? "" : Constants.S3_BASE_URI +
+        return photo == null || photo.isBlank() ? "" : Constants.S3_BASE_URI +
                 CHAT_FOLDER_NAME + "/" +
                 URLEncoder.encode(sender, StandardCharsets.UTF_8) + "/" + photo;
     }
 
     public String getAudioPath (){
-        return audio == null || audio.isEmpty() ? "" : Constants.S3_BASE_URI +
+        return audio == null || audio.isBlank() ? "" : Constants.S3_BASE_URI +
                 CHAT_FOLDER_NAME + "/" +
                 URLEncoder.encode(sender, StandardCharsets.UTF_8) + "/" + audio;
     }
 
     public String getDocPath (){
-        return document == null || document.isEmpty() ? "" : Constants.S3_BASE_URI +
+        return document == null || document.isBlank() ? "" : Constants.S3_BASE_URI +
                 CHAT_FOLDER_NAME + "/" +
                 URLEncoder.encode(sender + "/" + document, StandardCharsets.UTF_8);
     }

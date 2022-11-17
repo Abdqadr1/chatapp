@@ -103,7 +103,7 @@ const UpdateModal = ({ obj, setShow, auth }) => {
                         <input onChange={handleSelectImage} type="file" name="image" className="d-none" id="profilePic"
                             accept="image/jpg, image/png, image/jpeg" />
                         <FloatingLabel controlId="floatingPassword" label="BIO">
-                            <Form.Control name="bio" defaultValue={bio ?? ""} maxLength={100} required />
+                            <Form.Control className="bg-transparent border-secondary"  name="bio" defaultValue={bio ?? ""} maxLength={100} required />
                         </FloatingLabel>
                         <div className="d-flex justify-content-end mt-3">
                             <Button type="submit" variant="success"> Update </Button>

@@ -49,7 +49,7 @@ const Contacts = ({ setCurrentChat, contacts, setContacts, auth, searchContact, 
             <div className="px-2">
                 <Form.Control type="text" placeholder="&#128269; Search" className="contact-search" onInput={handleSearch} />
             </div>
-            <div className="con-div">
+            <div className="con-div bodtop">
              {
                 contacts.length > 0 ?
                         contacts.map(c => <Contact key={c.phoneNumber} obj={c} current={currentChat}

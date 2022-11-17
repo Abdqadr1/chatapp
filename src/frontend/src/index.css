@@ -31,15 +31,47 @@ code {
 }
 .chat-page-container{
   height: calc(100vh - 20px);
-  padding: 10px;
+  padding-inline: 10px;
   border-radius: 8px;
   box-sizing: border-box;
-  border: 1px solid #6c757d;
   margin: 8px;
-  background: rgb(232, 218, 234);
-    background: linear-gradient(22deg, rgba(232, 218, 234, 1) 28%, rgba(234, 215, 219, 1) 57%);
+  color: var(--light);
+  background: rgb(22, 41, 66);
+    background: linear-gradient(83deg, rgba(22, 41, 66, 1) 36%, rgba(0, 45, 98, 1) 65%);
 }
 .chat-row, .chat-col, .msg-col{
   height: 100%;
   max-height: calc(100% - 0px);
+}
+.input{
+  background-color: transparent !important;
+  border-color: var(--secondary) !important;
+  color: #343a40 !important;
+}
+.input::placeholder{
+  color: #343a40 !important;
+}
+.input:focus{
+  background-color: transparent !important;
+  border-color: var(--secondary-hover) !important;
+}
+
+.bodtom{
+  border-bottom: 1px solid #659a81 !important;
+}
+.bodright {
+  border-right: 1px solid #659a81 !important;
+}
+.bodleft {
+  border-left: 1px solid #659a81 !important;
+}
+.bodtop {
+  border-top: 1px solid #659a81 !important;
+}
+.bod {
+  border: 1px solid #659a81 !important;
+}
+
+.modal-content{
+  background-color: var(--light) !important;
 }

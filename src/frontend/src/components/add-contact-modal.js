@@ -25,13 +25,14 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
         return () => abortRef?.current.abort();
     }, [abortRef]);
 
+    const changeCallCode = e => {
+        inputRef.current.value = e.target.value;
+    }
 
     const findContact = e => {
         e.preventDefault();
-        const code = selectRef?.current.value;
         let number = inputRef?.current.value;
         if (number.startsWith("0")) number = number.substring(1);
-        console.log("looking for " + code + number);
         const txt = btnRef.current.textContent;
         btnRef.current.innerHTML = SPINNERS_BORDER_HTML;
         axios.get(`${url}/search-number/${number}`,
@@ -75,7 +76,7 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
                 </Alert>
                 <Form onSubmit={findContact}>
                     <div className="d-flex justify-content-between align-items-center">
-                        <Form.Select ref={selectRef} className="add-select" id="countrySelect" defaultValue={''}>
+                        <Form.Select ref={selectRef} className="add-select" id="countrySelect" defaultValue={''} onChange={changeCallCode}>
                             <option value='' hidden>---</option>
                             {
                                 countries.map(c => <option key={c.code} value={c.callCode}>{c.code} ({c.callCode})</option>)

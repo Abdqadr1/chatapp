@@ -23,6 +23,8 @@
     padding: 10px;
     word-wrap: break-word;
     border-radius: 8px;
+    color: black;
+    font-size: 14px;
 }
 .message-container.sent{
     background-color: #DCE3F6;
@@ -47,9 +49,9 @@
     border-radius: 8px;
     padding: 8px 10px;
     z-index: 100;
-    background-color: #e5e7f1e4;
 }
 .msg-input{
+    color: var(--secondary-hover);
     border: none;
     outline: none;
     padding: 3px;
@@ -66,6 +68,7 @@
 }
 .write-icon{
     font-size: 14px;
+    color: var(--light);
 }
 .msg-image{
     font-size: 12px;
@@ -77,6 +80,8 @@
 .modal-image{
     width: auto;
     max-width: calc(100% - 1px);
+    max-height: 350px;
+    object-fit: contain ;
 }
 .image-progress{
     position: absolute;
@@ -151,6 +156,7 @@
     padding: 12px;
     border-radius: 50%;
     margin-bottom: 8px;
+    border: 1px solid var(--secondary-hover);
 }
 audio{
     width: 150px;
@@ -203,4 +209,8 @@ figure.img-fig:hover .change-pic {
     display: grid;
     place-content: center;
     place-items: center;
+}
+.day-diff{
+    margin-block: 1em;
+    font-size: 14px;
 }
