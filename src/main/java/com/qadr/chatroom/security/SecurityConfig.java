@@ -33,7 +33,7 @@ public class SecurityConfig {
         });
 
         http.authorizeRequests().antMatchers("/api/auth", "/api/register",
-                "/ws/**").permitAll();
+                "/ws/**", "/").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
 
         http

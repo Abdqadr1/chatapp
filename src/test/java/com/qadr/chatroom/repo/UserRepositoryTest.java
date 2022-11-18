@@ -1,5 +1,7 @@
 package com.qadr.chatroom.repo;
 
+import com.qadr.chatroom.controller.UserController;
+import com.qadr.chatroom.controller.UserControllerTest;
 import com.qadr.chatroom.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,8 +47,7 @@ class UserRepositoryTest {
 
     @Test
     void findByPhoneNumber() {
-        String number = "+2348115213342";
-        Optional<User> byPhoneNumber = repo.findByPhoneNumber(number);
+        Optional<User> byPhoneNumber = repo.findByPhoneNumber(UserControllerTest.number);
         assertThat(byPhoneNumber).isPresent();
     }
 }
