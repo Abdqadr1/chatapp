@@ -52,7 +52,7 @@ const Login = () => {
                 <Form.Control  className="my-3 input" type="password" placeholder="password" name="password" required minLength={8} maxLength={100} />
                 <Button className="mt-2 w-100" type="submit" variant="success">Log In </Button>
                 <div className="d-flex justify-content-end mt-2">
-                    <Link className="text-decoration-none text-info fs-5" to={"/register"} >register</Link>
+                    <Link className="text-decoration-none text-success fs-6" to={"/register"} >register</Link>
                 </div>
             </Form>
         </div>
