@@ -46,8 +46,10 @@ public class AuthController {
 
     }
     public String getAuthNumber(){
-        return (String) SecurityContextHolder.getContext()
+        Object user =  SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
+        if(user instanceof User) return ((User) user).getUsername();
+        return (String) user;
     }
 
     @Data

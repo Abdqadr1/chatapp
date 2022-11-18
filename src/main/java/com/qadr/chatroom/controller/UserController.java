@@ -1,5 +1,6 @@
 package com.qadr.chatroom.controller;
 
+import com.qadr.chatroom.errors.CustomException;
 import com.qadr.chatroom.model.Message;
 import com.qadr.chatroom.model.User;
 import com.qadr.chatroom.model.UserDTO;
@@ -9,6 +10,7 @@ import com.qadr.chatroom.s3.S3Properties;
 import com.qadr.chatroom.service.MessageService;
 import com.qadr.chatroom.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,8 @@ public class UserController {
 
     @GetMapping("/api/search-number/{number}")
     public UserDTO search(@PathVariable("number") String number){
+        String current = authController.getAuthNumber();;
+        if(current.equals(number)) throw new CustomException(HttpStatus.BAD_REQUEST, "Can't search self");
         return userService.search(number);
     }
 
@@ -68,7 +72,7 @@ public class UserController {
 
     @PutMapping("/api/update-info")
     public String updateUserInfo(@RequestParam("bio") String bio,
-                                 @RequestParam("image")MultipartFile file) throws IOException {
+                                 @RequestParam(value = "image", required = false)MultipartFile file) throws IOException {
         String number = authController.getAuthNumber();
         if (file != null && !file.isEmpty()) {
             String folder = Constants.USER_IMAGE_FOLDER_NAME + "/" + number;
