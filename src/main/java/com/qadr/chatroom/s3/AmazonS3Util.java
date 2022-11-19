@@ -1,12 +1,9 @@
 package com.qadr.chatroom.s3;
-import com.qadr.chatroom.errors.CustomException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -15,9 +12,7 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -54,21 +49,17 @@ public class AmazonS3Util {
         S3Client s3Client = S3Client.builder()
                 .credentialsProvider(new S3CredentialsProvider(accessKey, secretKey))
                 .region(Region.of(BUCKET_REGION)).build();
-        Map<String, String> data = new HashMap<>();
-        data.put("xx-date", new Date().toString());
         PutObjectRequest putObjectRequest =
-                PutObjectRequest.builder().metadata(data)
-                        .bucket(BUCKET_NAME)
+                PutObjectRequest.builder().bucket(BUCKET_NAME)
                         .key(folderName + "/" + fileName).acl("public-read")
                         .build();
-
+        putObjectRequest.metadata().put("date", new Date().toString());
         try {
             s3Client.putObject(putObjectRequest,
                     RequestBody.fromInputStream(inputStream,inputStream.available())
             );
         } catch (IOException e) {
             LOGGER.error("Could not upload file", e);
-            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading file");
         }
     }
 

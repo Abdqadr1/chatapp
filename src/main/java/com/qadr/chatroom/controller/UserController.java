@@ -20,8 +20,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.qadr.chatroom.s3.S3Properties.USER_IMAGE_FOLDER_NAME;
-
 @RestController
 public class UserController {
     @Autowired private UserService userService;

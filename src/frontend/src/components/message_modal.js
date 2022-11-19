@@ -1,5 +1,5 @@
 import { Modal, Button } from "react-bootstrap";
-const MessageModal = ({ obj, setShow, callback }) => {
+const MessageModal = ({ obj, setShow }) => {
     const hideModal = () => setShow(s => ({ ...s, show: false }));
     return ( 
         <Modal show={obj.show} onHide={hideModal}>
@@ -10,7 +10,7 @@ const MessageModal = ({ obj, setShow, callback }) => {
                 <p>{obj.message}</p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="danger" onClick={hideModal}> Close </Button>
+                <Button variant="danger" onClick={hideModal}>Close</Button>
             </Modal.Footer>
         </Modal>
      );
