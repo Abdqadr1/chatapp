@@ -60,14 +60,13 @@ const Register = () => {
             });
     }
     const changeCallCode = e => {
-        console.log(e.target.value);
         setForm(s => ({...s, phoneNumber: e.target.value}))
     }
     
     return (  
         <div className="d-flex align-items-center justify-content-center" style={{height: '100vh'}}>
-            <Form onSubmit={handleSubmit} className="bod rounded px-3 py-4">
-                <p className="text-center fw-bold">Register</p>
+            <Form onSubmit={handleSubmit} className="bod rounded px-3 py-4" style={{width: "40vw"}} >
+                <p className="text-center fw-bold">Create Account</p>
                 <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show} dismissible onClose={toggleAlert}>
                     {alert.message}
                 </Alert>
@@ -90,7 +89,7 @@ const Register = () => {
                     name="confirm" required minLength={8} maxLength={100} />
                 <Button className="mt-2 w-100" type="submit" variant="success">Register</Button>
                 <div className="d-flex justify-content-end mt-2">
-                    <Link className="text-decoration-none text-success fs-6" to={"/login"} >Login</Link>
+                    <Link className="text-decoration-none text-success fs-6" to={"/login"}>Login</Link>
                 </div>
             </Form>
         </div>

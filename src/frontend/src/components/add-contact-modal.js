@@ -32,10 +32,12 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
 
     const findContact = e => {
         e.preventDefault();
+        const target = e.target;
         let number = inputRef?.current.value;
         if (number.startsWith("0")) number = number.substring(1);
-        const txt = btnRef.current.textContent;
-        btnRef.current.innerHTML = SPINNERS_BORDER_HTML;
+        const btn = target.querySelector("button[type='submit']");
+        const txt = btn.textContent;
+        btn.innerHTML = SPINNERS_BORDER_HTML;
         axios.get(`${url}/search-number/${number}`,
             {
                 signal: abortRef.current?.signal,
@@ -62,7 +64,7 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
                 isTokenExpired(err, () => navigate("/login"))
                 setAlert({ show: true, message: "could not find contact" })
             })
-            .finally(() => btnRef.current.textContent = txt);
+            .finally(() => btn.textContent = txt);
     }
 
     return ( 
@@ -83,9 +85,9 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
                                 countries.map(c => <option key={c.code} value={c.callCode}>{c.code} ({c.callCode})</option>)
                             }
                         </Form.Select>
-                        <Form.Control ref={inputRef} type='phone' name="number" className="add-input" placeholder="phone number..." required />
+                        <Form.Control ref={inputRef} type='phone' name="number" className="add-input" placeholder="phone number" required />
                     </div>
-                    <Button ref={btnRef} className="add-btn" type='submit' variant="primary"> Add Contact </Button>
+                    <Button className="add-btn" type='submit' variant="primary">Add Contact</Button>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
