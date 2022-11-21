@@ -3,7 +3,6 @@ package com.qadr.chatroom.service;
 import com.qadr.chatroom.model.Message;
 import com.qadr.chatroom.model.SocketMessage;
 import com.qadr.chatroom.repo.MessageRepo;
-import com.qadr.chatroom.s3.S3Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import java.util.List;
 public class MessageService {
     @Autowired private MessageRepo messageRepo;
     @Autowired private SimpMessagingTemplate simpleMessagingTemplate;
-    @Autowired private S3Properties s3Properties;
 
     public void saveAndSend(SocketMessage msg, String key){
         Message message = new Message(msg);

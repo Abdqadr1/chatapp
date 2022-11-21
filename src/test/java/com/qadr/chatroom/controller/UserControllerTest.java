@@ -69,7 +69,7 @@ public class UserControllerTest {
     @Order(3)
     @WithMockUser(username = number, password = "pass")
     void searchSelfReturnBadRequest() throws Exception {
-        mockMvc.perform(get("/api/search-number/" + number))
+        mockMvc.perform(post("/api/search-number/" + number))
                 .andExpect(status().isBadRequest())
                 .andDo(print()).andReturn();
     }
@@ -79,7 +79,7 @@ public class UserControllerTest {
     @Order(4)
     @WithMockUser(username = number2, password = "pass")
     void searchExistingUser() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/api/search-number/" + number))
+        MvcResult mvcResult = mockMvc.perform(post("/api/search-number/" + number))
                 .andExpect(status().isOk())
                 .andDo(print()).andReturn();
         UserDTO res = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), UserDTO.class);
@@ -90,7 +90,7 @@ public class UserControllerTest {
     @Order(5)
     @WithMockUser(username = number, password = "pass")
     void searchNotExistingUser() throws Exception {
-        mockMvc.perform(get("/api/search-number/0" + number+45))
+        mockMvc.perform(post("/api/search-number/0" + number+45))
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }

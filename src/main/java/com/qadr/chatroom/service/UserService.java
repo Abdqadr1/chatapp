@@ -5,7 +5,6 @@ import com.qadr.chatroom.model.MyUserDetails;
 import com.qadr.chatroom.model.User;
 import com.qadr.chatroom.model.UserDTO;
 import com.qadr.chatroom.repo.UserRepository;
-import com.qadr.chatroom.s3.S3Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +20,6 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     @Autowired private UserRepository userRepository;
     @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired private S3Properties s3Properties;
 
 
     public User registerUser(User user){
@@ -42,7 +40,7 @@ public class UserService implements UserDetailsService {
         User byPhoneNumber = getByPhoneNumber(number)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Could not find user"));
 
-        return new UserDTO(byPhoneNumber, s3Properties);
+        return new UserDTO(byPhoneNumber);
     }
 
     @Override

@@ -6,7 +6,6 @@ import com.qadr.chatroom.model.User;
 import com.qadr.chatroom.model.UserDTO;
 import com.qadr.chatroom.s3.AmazonS3Util;
 import com.qadr.chatroom.s3.Constants;
-import com.qadr.chatroom.s3.S3Properties;
 import com.qadr.chatroom.service.MessageService;
 import com.qadr.chatroom.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +24,6 @@ public class UserController {
     @Autowired private UserService userService;
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private MessageService messageService;
-    @Autowired private AmazonS3Util amazonS3Util;
-    @Autowired private S3Properties s3Properties;
     @Autowired private AuthController authController;
 
     @PostMapping("/api/register")
@@ -34,7 +31,7 @@ public class UserController {
         userService.registerUser(user);
     }
 
-    @GetMapping("/api/search-number/{number}")
+    @PostMapping("/api/search-number/{number}")
     public UserDTO search(@PathVariable("number") String number){
         String current = authController.getAuthNumber();;
         if(current.equals(number)) throw new CustomException(HttpStatus.BAD_REQUEST, "Can't search self");
@@ -75,9 +72,9 @@ public class UserController {
         if (file != null && !file.isEmpty()) {
             String folder = Constants.USER_IMAGE_FOLDER_NAME + "/" + number;
             String fileName = file.getOriginalFilename();
-            amazonS3Util.removeFolder(folder);
-            amazonS3Util.uploadFile(folder, fileName, file.getInputStream());
-            String photo = s3Properties.getURI() + URLEncoder.encode(folder + "/" + fileName, StandardCharsets.UTF_8);
+            AmazonS3Util.removeFolder(folder);
+            AmazonS3Util.uploadFile(folder, fileName, file.getInputStream());
+            String photo = Constants.S3_BASE_URI + URLEncoder.encode(folder + "/" + fileName, StandardCharsets.UTF_8);
             userService.updateInfo(bio, number, fileName);
             return photo;
         }

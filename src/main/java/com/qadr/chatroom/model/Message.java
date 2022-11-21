@@ -1,7 +1,6 @@
 package com.qadr.chatroom.model;
 
 import com.qadr.chatroom.s3.Constants;
-import com.qadr.chatroom.s3.S3Properties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.qadr.chatroom.s3.S3Properties.CHAT_FOLDER_NAME;
+import static com.qadr.chatroom.s3.Constants.CHAT_FOLDER_NAME;
 
 @AllArgsConstructor
 @NoArgsConstructor

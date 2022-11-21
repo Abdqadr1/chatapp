@@ -4,6 +4,7 @@ package com.qadr.chatroom.controller;
 import com.qadr.chatroom.model.MessageStatus;
 import com.qadr.chatroom.model.SocketMessage;
 import com.qadr.chatroom.s3.AmazonS3Util;
+import com.qadr.chatroom.s3.Constants;
 import com.qadr.chatroom.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -17,13 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Calendar;
 
-import static com.qadr.chatroom.s3.S3Properties.CHAT_FOLDER_NAME;
-
 
 @RestController
 public class MessageController {
     @Autowired private MessageService messageService;
-    @Autowired private AmazonS3Util amazonS3Util;
     @Autowired private AuthController authController;
 
     @MessageMapping("/chat/{key}")
@@ -38,8 +36,8 @@ public class MessageController {
         if (file == null || file.isEmpty()) return "";
         String fileName = generateFileName(number, file);
 //        System.out.println(fileName + file.getSize());
-        String folder = CHAT_FOLDER_NAME + "/" + number;
-        amazonS3Util.uploadFile(folder, fileName, file.getInputStream());
+        String folder = Constants.CHAT_FOLDER_NAME + "/" + number;
+        AmazonS3Util.uploadFile(folder, fileName, file.getInputStream());
         return fileName;
     }
 

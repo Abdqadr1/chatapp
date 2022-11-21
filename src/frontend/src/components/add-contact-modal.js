@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import { addContactToStorage, isTokenExpired, SPINNERS_BORDER_HTML } from "./utilities";
 const AddContactModal = ({ obj, setShow, callback, auth }) => {
-    const [inputRef, abortRef, selectRef, btnRef, alertRef] = [useRef(), useRef(), useRef(), useRef(), useRef()];
+    const [inputRef, abortRef, selectRef, alertRef] = [useRef(), useRef(), useRef(), useRef()];
     const [countries, setCountries] = useState([]);
     const hideModal = () => setShow(s => ({ ...s, show: false }));
     const [alert, setAlert] = useState({ show: false, message: "", variant: "danger" });
@@ -38,7 +38,7 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
         const btn = target.querySelector("button[type='submit']");
         const txt = btn.textContent;
         btn.innerHTML = SPINNERS_BORDER_HTML;
-        axios.get(`${url}/search-number/${number}`,
+        axios.post(`${url}/search-number/${number}`, new FormData(),
             {
                 signal: abortRef.current?.signal,
                 headers: {
@@ -77,12 +77,12 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
                 <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show} dismissible onClose={toggleAlert}>
                     {alert.message}
                 </Alert>
-                <Form onSubmit={findContact}>
+                <Form data-testid="form" onSubmit={findContact}>
                     <div className="d-flex justify-content-between align-items-center">
                         <Form.Select ref={selectRef} className="add-select" id="countrySelect" defaultValue={''} onChange={changeCallCode}>
                             <option value='' hidden>---</option>
                             {
-                                countries.map(c => <option key={c.code} value={c.callCode}>{c.code} ({c.callCode})</option>)
+                                countries.map((c, i) => <option key={c.code} data-testid={`country-${i}`} value={c.callCode}>{c.code} ({c.callCode})</option>)
                             }
                         </Form.Select>
                         <Form.Control ref={inputRef} type='phone' name="number" className="add-input" placeholder="phone number" required />

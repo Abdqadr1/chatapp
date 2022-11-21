@@ -1,12 +1,23 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import Login from '../components/login';
+import axios from "axios";
+
+jest.mock("axios");
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+   ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedUsedNavigate,
+}));
 
 const MockLogin = () => {
     return (
-        <BrowserRouter>
+        <MemoryRouter>
             <Login/>
-        </BrowserRouter>
+        </MemoryRouter>
     )
 }
 
@@ -30,14 +41,13 @@ it("should fill input", async () => {
 })
 
 it("should change text when button clicked", async () => {
+    axios.post.mockResolvedValue({ data: { access_token: "tokes", phoneNumber: "number" } });
     render(<MockLogin />)
 
-    
     const loginButton = screen.getByText("Log In")
     expect(loginButton).toBeInTheDocument();
 
     fireEvent.click(loginButton);
-    
     expect(loginButton.textContent).not.toEqual("Log In");
 
 })
@@ -47,4 +57,26 @@ it("auth is null", async () => {
 
     expect(sessionStorage.getItem("auth")).toBeFalsy();
 
+})
+
+test("mock request", () => {
+    axios.post.mockResolvedValue({ data: { access_token: "tokes", phoneNumber: "number" } });
+
+    render(<MockLogin />)
+
+    
+    const number = "+2342527957235";
+    const numberInput = screen.getByPlaceholderText("phonenumber");
+    const passInput = screen.getByPlaceholderText("phonenumber");
+
+    userEvent.type(numberInput, number);
+    userEvent.type(passInput, "password");
+    
+    const loginButton = screen.getByText("Log In")
+    expect(loginButton).toBeInTheDocument();
+
+    fireEvent.click(loginButton);
+    
+    expect(loginButton.textContent).not.toEqual("Log In");
+    
 })

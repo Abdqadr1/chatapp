@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Configuration
 public class SchedulerConfig {
     @Autowired private MessageRepo messageRepo;
-    @Autowired private AmazonS3Util amazonS3Util;
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     public void deleteOldMessages(){
@@ -35,19 +34,21 @@ public class SchedulerConfig {
                 (msg.getAudio() != null && !msg.getAudio().isBlank()) ||
                 (msg.getDocument() != null && !msg.getDocument().isBlank());}
         ).collect(Collectors.toList());
-        collect.forEach(msg -> {
-            String folderName = Constants.CHAT_FOLDER_NAME + "/" + msg.getSender() + "/";
-            if(msg.getPhoto() != null && !msg.getPhoto().isBlank()){
-                amazonS3Util.deleteFile(folderName+msg.getPhoto());
-            }
-            if(msg.getAudio() != null && !msg.getAudio().isBlank()){
-                amazonS3Util.deleteFile(folderName+msg.getAudio());
-            }
-            if(msg.getDocument() != null && !msg.getDocument().isBlank()){
-                amazonS3Util.deleteFile(folderName+msg.getDocument());
-            }
-        });
+        collect.forEach(SchedulerConfig::accept);
         messageRepo.deleteAll(all);
+    }
+
+    private static void accept(Message msg) {
+        String folderName = Constants.CHAT_FOLDER_NAME + "/" + msg.getSender() + "/";
+        if (msg.getPhoto() != null && !msg.getPhoto().isBlank()) {
+            AmazonS3Util.deleteFile(folderName + msg.getPhoto());
+        }
+        if (msg.getAudio() != null && !msg.getAudio().isBlank()) {
+            AmazonS3Util.deleteFile(folderName + msg.getAudio());
+        }
+        if (msg.getDocument() != null && !msg.getDocument().isBlank()) {
+            AmazonS3Util.deleteFile(folderName + msg.getDocument());
+        }
     }
 
 }

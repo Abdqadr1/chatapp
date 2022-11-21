@@ -322,7 +322,7 @@ const StompWrapper = ()  => {
                     >
                         <ChatPage url={socketUrl} auth={auth} />
                 </StompSessionProvider>
-                : <div className="stomp-loader">{SPINNERS_BORDER}</div>
+                : <div className="stomp-loader" data-testid="loader">{SPINNERS_BORDER}</div>
             }
         </>
     )
