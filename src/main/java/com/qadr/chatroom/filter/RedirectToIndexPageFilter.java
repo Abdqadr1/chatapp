@@ -12,7 +12,7 @@ import java.util.List;
 @Slf4j
 public class RedirectToIndexPageFilter implements Filter {
     List<String> urls = List.of(
-            "/static", "/manifest","/robots.txt",
+            "/static/", "/manifest","/robots.txt",
             "/logo", "/favicon", "/api/", "/site-logo", "/ws"
     );
     @Override

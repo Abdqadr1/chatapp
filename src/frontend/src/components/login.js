@@ -31,7 +31,6 @@ const Login = () => {
                 navigate("/chat");
             })
             .catch(err => {
-                console.log(err)
                 setAlert(s => ({ ...s, show: true, message: err?.response?.data.message || "An error occurs" }))
             })
             .finally(() => {
@@ -41,7 +40,7 @@ const Login = () => {
 
     return ( 
         <div className="d-flex align-items-center justify-content-center" style={{height: '100vh'}}>
-            <Form onSubmit={handleSubmit} className="bod rounded px-3 py-4" style={{width: "40vw"}} >
+            <Form onSubmit={handleSubmit} className="bod rounded px-3 py-4 loginform" >
                 <p className="text-center fw-bold">Account Login</p>
                 <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show} dismissible onClose={toggleAlert}>
                     <small>{alert.message}</small>

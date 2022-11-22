@@ -65,7 +65,7 @@ const Register = () => {
     
     return (  
         <div className="d-flex align-items-center justify-content-center" style={{height: '100vh'}}>
-            <Form onSubmit={handleSubmit} className="bod rounded px-3 py-4" style={{width: "40vw"}} >
+            <Form onSubmit={handleSubmit} className="bod rounded px-3 py-4 loginform" >
                 <p className="text-center fw-bold">Create Account</p>
                 <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show} dismissible onClose={toggleAlert}>
                     {alert.message}

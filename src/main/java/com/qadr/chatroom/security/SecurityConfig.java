@@ -32,9 +32,11 @@ public class SecurityConfig {
             return configuration;
         });
 
-        http.authorizeRequests().antMatchers("/api/auth", "/api/register",
-                "/ws/**", "/").permitAll();
-        http.authorizeRequests().anyRequest().authenticated();
+        http.authorizeRequests().antMatchers("/api/auth", "/api/register" ).permitAll();
+        http.authorizeRequests().antMatchers(
+                "/api/**"
+        ).authenticated();
+        http.authorizeRequests().anyRequest().permitAll();
 
         http
                 .formLogin().disable()

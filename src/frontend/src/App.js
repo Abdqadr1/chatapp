@@ -17,6 +17,7 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
             <Route path='/logout' element={<LogOut />} />
+            <Route path='*' element={<div>Page Not found</div>} />
           </Routes>
         </BrowserRouter>
       </div>

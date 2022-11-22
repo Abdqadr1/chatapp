@@ -75,3 +75,8 @@ code {
 .modal-content{
   background-color: var(--light) !important;
 }
+
+/* login width */
+.loginform{
+  width: min(90%, 420px);
+}
