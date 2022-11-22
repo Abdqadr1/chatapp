@@ -11,7 +11,11 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 public class JWTUtil {
-    private static final Algorithm algorithm = Algorithm.HMAC256("my_secret_key".getBytes());
+    private static final String JWT_KEY;
+    static {
+        JWT_KEY = System.getProperty("JWT_KEY", "my_secret_key");
+    }
+    private static final Algorithm algorithm = Algorithm.HMAC256(JWT_KEY.getBytes());
     public static String createAccessToken (User user, String path){
         return JWT.create()
                 .withSubject(user.getUsername())

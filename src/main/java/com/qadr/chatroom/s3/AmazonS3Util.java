@@ -1,7 +1,9 @@
 package com.qadr.chatroom.s3;
 
+import com.qadr.chatroom.errors.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -10,7 +12,9 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AmazonS3Util {
@@ -39,19 +43,22 @@ public class AmazonS3Util {
     }
 
     public static void uploadFile(String folderName, String fileName, InputStream inputStream){
-        S3Client s3Client = S3Client.builder()
-                .region(Region.of(BUCKET_REGION)).build();
-        PutObjectRequest putObjectRequest =
-                PutObjectRequest.builder().bucket(BUCKET_NAME)
-                        .key(folderName + "/" + fileName).acl("public-read")
-                        .build();
-        putObjectRequest.metadata().put("date", new Date().toString());
         try {
+            Map<String, String> data = new HashMap<>();
+            data.put("date", new Date().toString());
+            S3Client s3Client = S3Client.builder()
+                    .region(Region.of(BUCKET_REGION)).build();
+            PutObjectRequest putObjectRequest =
+                    PutObjectRequest.builder().bucket(BUCKET_NAME)
+                            .key(folderName + "/" + fileName).acl("public-read")
+                            .metadata(data)
+                            .build();
             s3Client.putObject(putObjectRequest,
                     RequestBody.fromInputStream(inputStream,inputStream.available())
             );
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Could not upload file", e);
+            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading file");
         }
     }
 

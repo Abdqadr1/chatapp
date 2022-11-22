@@ -49,12 +49,9 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
                 setAlert(s => ({...s,  show: false}))
                 const { phoneNumber, name, photo } = res.data;
                 const c = {
-                    key: phoneNumber,name,
-                    phoneNumber: phoneNumber,
-                    last_msg: "",
-                    time: new Date(),
-                    unread: 0,
-                    photo
+                    key: phoneNumber,name, phoneNumber,
+                    last_msg: "", time: new Date(),
+                    unread: 0, photo
                 }
                 addContactToStorage(auth?.phoneNumber, c);
                 callback(c);
@@ -74,8 +71,9 @@ const AddContactModal = ({ obj, setShow, callback, auth }) => {
             </Modal.Header>
             <Modal.Body className="text-center">
                 <p className="text-start">Find By Phone Number</p>
-                <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show} dismissible onClose={toggleAlert}>
-                    {alert.message}
+                <Alert ref={alertRef} tabIndex={-1} variant={alert.variant} show={alert.show}
+                    dismissible onClose={toggleAlert}>
+                    <p className="mb-0" data-testid="alert-msg">{alert.message}</p>
                 </Alert>
                 <Form data-testid="form" onSubmit={findContact}>
                     <div className="d-flex justify-content-between align-items-center">

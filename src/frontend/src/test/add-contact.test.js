@@ -7,6 +7,11 @@ import axios from "axios";
 
    // mocking axios request
     jest.mock("axios");
+    const mockedUseNavigate = jest.fn();
+    jest.mock("react-router-dom", () => ({
+        ...jest.requireActual("react-router-dom"),
+        useNavigate: () => mockedUseNavigate,
+    }))
 
     afterEach(cleanup)
 
@@ -65,10 +70,6 @@ describe('AddContactModalTest', () => {
         axios.post.mockResolvedValue({ data: { name: "test name", phoneNumber: "number", photo: "" } });
         
         render(<MockAddModal />)
-         
-        await waitFor(() => {
-         expect(screen.getByTestId(/country-0/i).value).toBe(countriesResponse[0].callCode);
-        });
         
         const number = "+2342527957235";
         const numberInput = screen.getByPlaceholderText("phone number");
@@ -79,6 +80,10 @@ describe('AddContactModalTest', () => {
 
         fireEvent.click(addBtn);
         expect(addBtn.textContent).not.toEqual("Add Contact");
+
+        await waitFor(() => {
+             expect(screen.getByTestId(/alert-msg/i)).toBeVisible();
+        });
        
     })
  })

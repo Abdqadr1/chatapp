@@ -10,7 +10,7 @@ import { addMessage, getAllConversation, getConversationFromStorage, getLastMsg,
 import uuid from 'react-uuid';
 import UpdateModal from "./update-modal";
 
-const ChatPage = ({ url, auth, contactList } ) => {
+export const ChatPage = ({ url, auth } ) => {
     const [currentChat, setCurrentChat] = useState({});
     const [updateInfo, setUpdateInfo] = useState({ show: false, info: {} })
     const [timer, setTimer] = useState();
@@ -264,7 +264,7 @@ const ChatPage = ({ url, auth, contactList } ) => {
      );
 }
 
-const StompWrapper = ()  => {
+export const StompWrapper = ()  => {
     const auth = JSON.parse(sessionStorage.getItem("auth") || "{}");
     const socketUrl = process.env.REACT_APP_SOCKET_URL;
     const [isReady, setReady] = useState(false);
@@ -327,5 +327,3 @@ const StompWrapper = ()  => {
         </>
     )
 }
- 
-export default StompWrapper;

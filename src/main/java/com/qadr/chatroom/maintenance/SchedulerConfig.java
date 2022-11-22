@@ -24,12 +24,11 @@ public class SchedulerConfig {
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     public void deleteOldMessages(){
-        LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(3);
+        LocalDateTime fiveDaysAgo = LocalDateTime.now().minusDays(5);
         Instant instant = fiveDaysAgo.toInstant(ZoneOffset.UTC);
         Date date = Date.from(instant);
         List<Message> all = messageRepo.findByDateLessThan(date);
         List<Message> collect = all.stream().filter(msg ->{
-            System.out.println(msg.getDate());
                 return (msg.getPhoto() != null && !msg.getPhoto().isBlank()) ||
                 (msg.getAudio() != null && !msg.getAudio().isBlank()) ||
                 (msg.getDocument() != null && !msg.getDocument().isBlank());}

@@ -35,9 +35,9 @@ public class MessageController {
         String number = authController.getAuthNumber();
         if (file == null || file.isEmpty()) return "";
         String fileName = generateFileName(number, file);
-//        System.out.println(fileName + file.getSize());
         String folder = Constants.CHAT_FOLDER_NAME + "/" + number;
         AmazonS3Util.uploadFile(folder, fileName, file.getInputStream());
+//        System.out.println(fileName + file.getSize());
         return fileName;
     }
 
