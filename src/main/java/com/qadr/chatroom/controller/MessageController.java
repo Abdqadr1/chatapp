@@ -24,6 +24,9 @@ public class MessageController {
     @Autowired private MessageService messageService;
     @Autowired private AuthController authController;
 
+    public MessageController() {
+    }
+
     @MessageMapping("/chat/{key}")
     public void sendMessage(@DestinationVariable String key,  @Payload SocketMessage message) {
         message.setStatus(MessageStatus.SENT);
