@@ -21,15 +21,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .cors().configurationSource(request -> {
-            CorsConfiguration configuration = new CorsConfiguration();
-//            configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-            configuration.setAllowedMethods(List.of("*"));
-            configuration.setAllowedHeaders(List.of("*"));
-            configuration.setAllowCredentials(true);
-            return configuration;
-        });
+        http.csrf().disable().cors().disable();
+//                .cors().configurationSource(request -> {
+//            CorsConfiguration configuration = new CorsConfiguration();
+////            configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+//            configuration.setAllowedMethods(List.of("*"));
+//            configuration.setAllowedHeaders(List.of("*"));
+//            configuration.setAllowCredentials(true);
+//            return configuration;
+//        });
 
         http.authorizeRequests().antMatchers("/api/auth", "/api/register" ).permitAll();
         http.authorizeRequests().antMatchers(
