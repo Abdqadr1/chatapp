@@ -27,7 +27,7 @@ public class MessageController {
     public MessageController() {
     }
 
-    @MessageMapping("/chat/{key}")
+    @MessageMapping({"/chat/{key}"})
     public void sendMessage(@DestinationVariable String key,  @Payload SocketMessage message) {
         message.setStatus(MessageStatus.SENT);
         messageService.saveAndSend(message, key);

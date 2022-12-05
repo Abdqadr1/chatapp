@@ -14,6 +14,7 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
         messages.anyMessage().permitAll();
     }
 
+
     @Override
     protected boolean sameOriginDisabled() {
         return true;
